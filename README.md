@@ -1,55 +1,24 @@
-[![codecov](https://codecov.io/gh/tfandkusu/android_app_template/branch/main/graph/badge.svg?token=DQI5AN5H0Q)](https://codecov.io/gh/tfandkusu/android_app_template)
+[![codecov](https://codecov.io/gh/tfandkusu/try_graphql_android/branch/main/graph/badge.svg?token=BT4AN27WS3)](https://codecov.io/gh/tfandkusu/try_graphql_android)
 
-# Android app template
+# Try GraphQL Android
+
+Try QraphQL Android client using [apollo-kotlin](https://github.com/apollographql/apollo-kotlin)
 
 # Functionality
 
-This repository is a template for Android app.
-So it does not have any practical features.
+TODO
 
-It displays a list of [tfandkusu](https://github.com/tfandkusu)'s public GitHub repositories.
+# Template
 
-<img src="https://user-images.githubusercontent.com/16898831/146685977-85ab807c-bb04-4378-b005-71c7ecb9566c.png" width="200">
-
-# Install
-
-Current main branch.
-
-[<img src="https://dply.me/tfafbv/button/large" alt="Try it on your device via DeployGate">](https://dply.me/tfafbv#install)
+This repository is generated from [tfandkusu/android_app_template](https://github.com/tfandkusu/android_app_template)
 
 # Architecture
 
-- **MVVM** of [Android recommended app architecture](https://developer.android.com/jetpack/guide#recommended-app-arch) 
-- **Use Case** for resolving fat ViewModel problem
+TODO
 
 # Module structure
 
-<img src="https://user-images.githubusercontent.com/16898831/147387105-669464f2-9e86-405a-b13e-7fd4213920bc.png" width="720">
-
-Multiple `compose`, `presentation`, and  `usecase`  modules will be created for each feature.
-
-## app
-
-- Activity
-- Compose navigation host
-
-## compose
-
-It has minimum dependency to speed up compose preview.
-
-- Compose
-- Compose preview
-- ViewModel interface
-- ViewModel implementation for compose preview
-
-## presentation
-
-- ViewModel implementation for production
-
-## viewCommon
-
-- Common API error handling
-- Utility for ViewModel and LiveData
+TODO
 
 # Technology used
 
@@ -68,8 +37,7 @@ All libraries used are defined in [lib.versions.toml](https://github.com/tfandku
 
 ## Data layer
 
-- [Retrofit](https://github.com/square/retrofit)
-- [Room](https://developer.android.com/jetpack/androidx/releases/room)
+- [apollo-kotlin](https://github.com/apollographql/apollo-kotlin)
 
 ## DI
 
@@ -93,10 +61,7 @@ All libraries used are defined in [lib.versions.toml](https://github.com/tfandku
 - [gradle-build-action](https://github.com/gradle/gradle-build-action)
 - [Spotless plugin for Gradle](https://github.com/diffplug/spotless/tree/main/plugin-gradle)
 - [Danger](https://danger.systems/ruby/)
-- [danger-android_lint](https://github.com/loadsmart/danger-android_lint)  
-- [Renovate](https://www.whitesourcesoftware.com/free-developer-tools/renovate/)
-- [Firebase App Distribution](https://firebase.google.com/docs/app-distribution)
-- [DeployGate](https://deploygate.com/)
+- [danger-android_lint](https://github.com/loadsmart/danger-android_lint)
 
 ## Other
 
