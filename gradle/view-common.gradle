@@ -1,0 +1,25 @@
+apply from: rootProject.file("gradle/common.gradle")
+
+android {
+    buildFeatures {
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion libs.versions.compose.get()
+        kotlinCompilerVersion libs.versions.kotlin.get()
+    }
+}
+
+dependencies {
+    implementation libs.core
+    implementation libs.appcompat
+    implementation libs.material
+    implementation libs.compose.ui.ui
+    implementation libs.compose.material
+    implementation libs.compose.ui.preview
+    implementation libs.activity.compose
+    implementation libs.compose.livedata
+    debugImplementation libs.compose.ui.tooling
+    testImplementation libs.arch.core.testing
+    testImplementation libs.kotlin.coroutines.test
+}

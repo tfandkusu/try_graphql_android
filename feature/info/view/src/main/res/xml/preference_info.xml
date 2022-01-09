@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <Preference
+        app:key="oss"
+        app:title="@string/title_oss_license" />
+    <Preference
+        app:key="about"
+        app:title="@string/title_about" />
+</PreferenceScreen>

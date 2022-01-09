@@ -1,0 +1,48 @@
+allprojects {
+    apply plugin: 'jacoco'
+
+    jacoco {
+        toolVersion '0.8.7'
+    }
+}
+
+static Set<String> jacocoDependsOnTasks(Set<Project> subprojects) {
+    List<String> testTasks = []
+    subprojects.each { project ->
+        if (project.file("build.gradle").exists()) {
+            testTasks.add("$project.path:testDebugUnitTest")
+        }
+    }
+    return testTasks
+}
+
+// Reference
+// https://github.com/ericktijerou/vetdog/blob/master/configuration/jacoco.gradle
+
+FileCollection jacocoSourceDirectories(Set<Project> subprojects) {
+    Set<String> srcDirs = []
+    subprojects.each { project ->
+        srcDirs.add("$project.projectDir/src/main/java")
+    }
+    return files(srcDirs)
+}
+
+FileCollection jacocoClassDirectories(Set<Project> subprojects) {
+    Set<String> classDirectories = []
+    subprojects.each { project ->
+        classDirectories.add("$project.buildDir/tmp/kotlin-classes/debug")
+    }
+    return files(classDirectories)
+}
+
+task("jacocoReport", type: JacocoReport,
+        dependsOn: jacocoDependsOnTasks(subprojects)) {
+    group "Report"
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
+    sourceDirectories.from jacocoSourceDirectories(subprojects)
+    classDirectories.from jacocoClassDirectories(subprojects)
+    executionData rootProject.fileTree(dir: '.', includes: ["**/testDebugUnitTest.exec"])
+}

@@ -1,0 +1,7 @@
+apply plugin: 'com.android.library'
+apply from: rootProject.file("gradle/view-common.gradle")
+
+dependencies {
+    implementation project(':common:model')
+    testImplementation project(':testUtil')
+}

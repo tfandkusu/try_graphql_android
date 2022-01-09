@@ -1,0 +1,21 @@
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+rootProject.name = "App Template"
+enableFeaturePreview("VERSION_CATALOGS")
+include ':app'
+include ':common:model'
+include ':common:util'
+include ':data:remote'
+include ':data:local'
+include ':data:repository'
+include ':viewCommon'
+include ':testUtil'
+include ':feature:home:compose'
+include ':feature:home:presentation'
+include ':feature:home:usecase'
+include ':feature:info:view'

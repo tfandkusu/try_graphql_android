@@ -1,0 +1,7 @@
+apply plugin: 'com.android.library'
+apply from: rootProject.file("gradle/build-config.gradle")
+
+dependencies {
+    implementation libs.mockk
+    implementation libs.lifecycle.livedata.ktx
+}

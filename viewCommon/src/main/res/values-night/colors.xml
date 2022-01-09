@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- High-emphasis text -->
+    <color name="textHE">#ddffffff</color>
+    <!-- Medium-emphasis text -->
+    <color name="textME">#99ffffff</color>
+
+    <color name="top_app_bar">#12005e</color>
+    <color name="status_bar">#12005e</color>
+</resources>

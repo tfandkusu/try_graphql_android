@@ -1,0 +1,24 @@
+apply plugin: 'com.android.library'
+apply from: rootProject.file("gradle/common.gradle")
+apply from: rootProject.file("gradle/hilt.gradle")
+
+android {
+    defaultConfig {
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
+    }
+}
+
+dependencies {
+    implementation project(':common:model')
+    implementation project(':common:util')
+    implementation libs.room.runtime
+    implementation libs.room.ktx
+    kapt libs.room.compiler
+    // For robolectric to test SQLite
+    implementation libs.lifecycle.livedata.ktx
+    testImplementation libs.robolectric
+}

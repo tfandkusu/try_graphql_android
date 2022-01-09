@@ -1,0 +1,35 @@
+name: check
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: main
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v1
+        with:
+          java-version: '11'
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.1
+          bundler-cache: true
+      - uses: gradle/gradle-build-action@v2
+      - run: ./gradlew spotlessCheck
+      - run: bundle exec danger
+        env:
+          DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: ./gradlew jacocoReport
+      # Codecov
+      - run: curl -Os https://uploader.codecov.io/latest/linux/codecov
+      - run: chmod +x codecov
+      - run: ./codecov -t ${{ secrets.CODECOV_TOKEN }}

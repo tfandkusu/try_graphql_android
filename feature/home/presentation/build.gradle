@@ -1,0 +1,11 @@
+apply plugin: 'com.android.library'
+apply from: rootProject.file("gradle/view-common.gradle")
+apply from: rootProject.file("gradle/hilt.gradle")
+
+dependencies {
+    implementation project(':common:model')
+    implementation project(':viewCommon')
+    implementation project(':feature:home:compose')
+    implementation project(':feature:home:usecase')
+    testImplementation project(':testUtil')
+}

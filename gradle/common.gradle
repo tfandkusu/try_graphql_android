@@ -1,0 +1,9 @@
+apply from: rootProject.file("gradle/build-config.gradle")
+
+dependencies {
+    implementation libs.kotlin.coroutines.android
+    testImplementation libs.junit
+    testImplementation libs.mockk
+    testImplementation libs.kotest
+    testImplementation libs.test.core
+}

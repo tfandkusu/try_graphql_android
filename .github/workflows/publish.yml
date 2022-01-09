@@ -1,0 +1,23 @@
+name: publish
+on:
+  push:
+    branches:
+      - main
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v1
+        with:
+          java-version: '11'
+      # Save key store file.
+      - run: echo -n ${{ secrets.TEMPLATE_KEY_STORE_FILE }} | base64 -d > ~/template.jks
+      # Make release build and upload to DeployGate
+      - run: ./gradlew uploadDeployGateRelease
+        env:
+          TEMPLATE_STORE_PASSWORD: ${{ secrets.TEMPLATE_STORE_PASSWORD }}
+          TEMPLATE_KEY_PASSWORD: ${{ secrets.TEMPLATE_KEY_PASSWORD }}
+          DEPLOYGATE_APP_OWNER_NAME: ${{ secrets.DEPLOYGATE_APP_OWNER_NAME }}
+          DEPLOYGATE_API_TOKEN: ${{ secrets.DEPLOYGATE_API_TOKEN }}
+          DEPLOYGATE_DISTRIBUTION_KEY: ${{ secrets.DEPLOYGATE_DISTRIBUTION_KEY }}

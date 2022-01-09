@@ -1,0 +1,10 @@
+apply plugin: 'dagger.hilt.android.plugin'
+
+hilt {
+    enableExperimentalClasspathAggregation = true
+}
+
+dependencies {
+    implementation libs.hilt.android
+    kapt libs.hilt.compiler
+}

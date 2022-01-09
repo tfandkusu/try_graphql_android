@@ -1,0 +1,7 @@
+<resources>
+    <string name="title_info">Information</string>
+    <string name="title_oss_license">OSS License</string>
+    <string name="title_about">About</string>
+    <string name="version">Version</string>
+    <string name="copyright">© 2021</string>
+</resources>
