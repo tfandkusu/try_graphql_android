@@ -1,13 +1,11 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.google.firebase.appdistribution'
-apply plugin: 'deploygate'
 apply plugin: 'com.google.android.gms.oss-licenses-plugin'
 apply from: rootProject.file("gradle/view-common.gradle")
 apply from: rootProject.file("gradle/hilt.gradle")
 
 android {
     defaultConfig {
-        applicationId "com.tfandkusu.template"
+        applicationId "com.tfandkusu.graphql"
         versionCode 1
         versionName "2022.01.01"
 
@@ -28,27 +26,6 @@ android {
     packagingOptions {
         resources {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
-        }
-    }
-    signingConfigs {
-        release {
-            storeFile file("${System.getenv('HOME')}/template.jks")
-            storePassword System.getenv("TEMPLATE_STORE_PASSWORD")
-            keyAlias "app"
-            keyPassword System.getenv("TEMPLATE_KEY_PASSWORD")
-        }
-    }
-    buildTypes {
-        release {
-            // shrinkResources true
-            // minifyEnabled true
-            signingConfig signingConfigs.release
-
-            firebaseAppDistribution {
-                appId = System.getenv("FIREBASE_APP_ID")
-                releaseNotes = System.getenv("RELEASE_NOTE")
-                groups = "developers"
-            }
         }
     }
 }

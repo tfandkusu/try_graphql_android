@@ -9,8 +9,6 @@ buildscript {
         classpath libs.kotlin.gradle.plugin
         classpath libs.spotless.gradle.plugin
         classpath libs.hilt.gradle.plugin
-        classpath libs.firebase.appdistribution
-        classpath libs.deploygate
         classpath libs.oss.licenses.plugin
     }
 }

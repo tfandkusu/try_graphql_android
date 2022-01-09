@@ -5,7 +5,7 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "App Template"
+rootProject.name = "Try GraphQL"
 enableFeaturePreview("VERSION_CATALOGS")
 include ':app'
 include ':common:model'
