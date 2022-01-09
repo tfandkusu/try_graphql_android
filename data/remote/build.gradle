@@ -1,11 +1,19 @@
-apply plugin: 'com.android.library'
+plugins {
+    id 'com.android.library'
+    id 'com.apollographql.apollo3' version '3.0.0'
+}
 apply from: rootProject.file("gradle/common.gradle")
 apply from: rootProject.file("gradle/hilt.gradle")
 
 dependencies {
     implementation project(':common:model')
     implementation project(':common:util')
+    implementation libs.apollo
     implementation libs.retrofit.retrofit
     implementation libs.retrofit.moshi
     implementation libs.moshi.adapter
+}
+
+apollo {
+    packageName.set('com.tfandkusu.graphql.api')
 }

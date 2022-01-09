@@ -1,0 +1,15 @@
+query Issues($repo_name: String!){
+    viewer {
+        repository(name: $repo_name) {
+            issues(first: 10) {
+                edges {
+                    node {
+                        id
+                        title
+                        closed
+                    }
+                }
+            }
+        }
+    }
+}

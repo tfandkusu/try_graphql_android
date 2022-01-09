@@ -29,6 +29,8 @@ activity-compose = 'androidx.activity:activity-compose:1.4.0'
 compose-livedata = { module = 'androidx.compose.runtime:runtime-livedata', version.ref='compose' }
 preference = 'androidx.preference:preference-ktx:1.1.1'
 play-services-oss-licenses = 'com.google.android.gms:play-services-oss-licenses:17.0.0'
+# Apollo
+apollo = 'com.apollographql.apollo3:apollo-runtime:3.0.0'
 # Retrofit
 retrofit-retrofit = { module = 'com.squareup.retrofit2:retrofit', version.ref = 'retrofit' }
 retrofit-moshi = { module = 'com.squareup.retrofit2:converter-moshi', version.ref = 'retrofit' }
