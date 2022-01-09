@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.tfandkusu.template.info.view">
+    package="com.tfandkusu.graphql.info.view">
 
     <application>
         <activity-alias
-            android:name="com.tfandkusu.template.view.info.InfoActivityAlias"
-            android:targetActivity="com.tfandkusu.template.view.info.InfoActivity" />
+            android:name="com.tfandkusu.graphql.view.info.InfoActivityAlias"
+            android:targetActivity="com.tfandkusu.graphql.view.info.InfoActivity" />
         <activity
-            android:name="com.tfandkusu.template.view.info.InfoActivity"
+            android:name="com.tfandkusu.graphql.view.info.InfoActivity"
             android:exported="false"
             android:label="@string/title_info" />
         <activity
