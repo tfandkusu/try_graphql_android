@@ -5,6 +5,15 @@ plugins {
 apply from: rootProject.file("gradle/common.gradle")
 apply from: rootProject.file("gradle/hilt.gradle")
 
+android {
+    defaultConfig {
+        def properties = new Properties()
+        properties.load(project.rootProject.file('local.properties').newDataInputStream())
+        def GITHUB_TOKEN = properties.getProperty("github_token")
+        buildConfigField("String", "GITHUB_TOKEN", "\"${GITHUB_TOKEN}\"")
+    }
+}
+
 dependencies {
     implementation project(':common:model')
     implementation project(':common:util')
