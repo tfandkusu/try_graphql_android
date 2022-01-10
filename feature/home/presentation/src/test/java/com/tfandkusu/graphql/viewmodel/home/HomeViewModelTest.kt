@@ -3,8 +3,10 @@ package com.tfandkusu.graphql.viewmodel.home
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.tfandkusu.graphql.catalog.GitHubIssueCatalog
 import com.tfandkusu.graphql.usecase.home.HomeOnCreateUseCase
+import com.tfandkusu.graphql.usecase.home.HomeReloadUseCase
 import com.tfandkusu.graphql.viewmodel.mockStateObserver
 import io.mockk.MockKAnnotations
+import io.mockk.coVerifySequence
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.verifySequence
@@ -32,6 +34,9 @@ class HomeViewModelTest {
     @MockK(relaxed = true)
     private lateinit var onCreateUseCase: HomeOnCreateUseCase
 
+    @MockK(relaxed = true)
+    private lateinit var reloadUseCase: HomeReloadUseCase
+
     private lateinit var viewModel: HomeViewModel
 
     @ExperimentalCoroutinesApi
@@ -39,7 +44,7 @@ class HomeViewModelTest {
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
         MockKAnnotations.init(this)
-        viewModel = HomeViewModelImpl(onCreateUseCase)
+        viewModel = HomeViewModelImpl(onCreateUseCase, reloadUseCase)
     }
 
     @ExperimentalCoroutinesApi
@@ -64,6 +69,19 @@ class HomeViewModelTest {
             mockStateObserver.onChanged(HomeState())
             onCreateUseCase.execute()
             mockStateObserver.onChanged(HomeState(issues = issues, progress = false))
+        }
+    }
+
+    @ExperimentalCoroutinesApi
+    @Test
+    fun reload() = testDispatcher.runBlockingTest {
+        val mockStateObserver = viewModel.state.mockStateObserver()
+        viewModel.event(HomeEvent.Reload)
+        coVerifySequence {
+            mockStateObserver.onChanged(HomeState())
+            mockStateObserver.onChanged(HomeState(refresh = true))
+            reloadUseCase.execute()
+            mockStateObserver.onChanged(HomeState(refresh = false))
         }
     }
 }
