@@ -11,6 +11,8 @@ android {
         properties.load(project.rootProject.file('local.properties').newDataInputStream())
         def GITHUB_TOKEN = properties.getProperty("github_token")
         buildConfigField("String", "GITHUB_TOKEN", "\"${GITHUB_TOKEN}\"")
+        def REPOSITORY_NAME = properties.getProperty("repository_name")
+        buildConfigField("String", "REPOSITORY_NAME", "\"${REPOSITORY_NAME}\"")
     }
 }
 

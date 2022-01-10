@@ -15,7 +15,8 @@ class GithubIssueRemoteDataStoreImpl @Inject constructor(
     private val apolloClient: ApolloClient
 ) : GithubIssueRemoteDataStore {
     override fun listAsFlow(): Flow<List<GithubIssue>> {
-        val query = IssuesQuery("try_graphql_android")
+        val repositoryName = BuildConfig.REPOSITORY_NAME
+        val query = IssuesQuery(repositoryName)
         return apolloClient.query(query).toFlow().map { apolloResponse ->
             apolloResponse.data?.viewer?.repository?.issues?.edges?.mapNotNull { edge ->
                 edge?.node
