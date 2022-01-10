@@ -1,0 +1,16 @@
+query Issues($repo_name: String!) {
+    viewer {
+        repository(name: $repo_name) {
+            issues(first: 10, orderBy: {field: CREATED_AT, direction: DESC}) {
+                edges {
+                    node {
+                        id
+                        number
+                        title
+                        closed
+                    }
+                }
+            }
+        }
+    }
+}

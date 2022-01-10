@@ -21,15 +21,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.tfandkusu.graphql.catalog.GitHubRepoCatalog
+import com.tfandkusu.graphql.catalog.GitHubIssueCatalog
 import com.tfandkusu.graphql.compose.TemplateTopAppBar
-import com.tfandkusu.graphql.compose.home.listitem.GitHubRepoListItem
+import com.tfandkusu.graphql.compose.home.listitem.GitHubIssueListItem
 import com.tfandkusu.graphql.home.compose.R
 import com.tfandkusu.graphql.ui.theme.AppTemplateTheme
-import com.tfandkusu.graphql.view.error.ApiError
 import com.tfandkusu.graphql.view.info.InfoActivityAlias
-import com.tfandkusu.graphql.viewmodel.error.ApiErrorViewModelHelper
-import com.tfandkusu.graphql.viewmodel.error.useErrorState
 import com.tfandkusu.graphql.viewmodel.home.HomeEffect
 import com.tfandkusu.graphql.viewmodel.home.HomeEvent
 import com.tfandkusu.graphql.viewmodel.home.HomeState
@@ -42,11 +39,9 @@ import kotlinx.coroutines.flow.flow
 fun HomeScreen(viewModel: HomeViewModel) {
     LaunchedEffect(Unit) {
         viewModel.event(HomeEvent.OnCreate)
-        viewModel.event(HomeEvent.Load)
     }
     val context = LocalContext.current
     val state = useState(viewModel)
-    val errorState = useErrorState(viewModel.error)
     Scaffold(
         topBar = {
             TemplateTopAppBar(
@@ -67,35 +62,26 @@ fun HomeScreen(viewModel: HomeViewModel) {
             )
         }
     ) {
-        if (errorState.noError()) {
-            if (state.progress) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
-            } else {
-                LazyColumn {
-                    state.repos.map {
-                        item(key = it.id) {
-                            GitHubRepoListItem(it)
-                        }
-                    }
-                }
+        if (state.progress) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
             }
         } else {
-            ApiError(errorState) {
-                viewModel.event(HomeEvent.Load)
+            LazyColumn {
+                state.issues.map {
+                    item(key = it.id) {
+                        GitHubIssueListItem(it)
+                    }
+                }
             }
         }
     }
 }
 
 class HomeViewModelPreview(private val previewState: HomeState) : HomeViewModel {
-    override val error: ApiErrorViewModelHelper
-        get() = ApiErrorViewModelHelper()
-
     override fun createDefaultState() = previewState
 
     override val state: LiveData<HomeState>
@@ -119,10 +105,10 @@ fun HomeScreenPreviewProgress() {
 @Composable
 @Preview
 fun HomeScreenPreviewList() {
-    val repos = GitHubRepoCatalog.getList()
+    val issues = GitHubIssueCatalog.getList()
     val state = HomeState(
         progress = false,
-        repos = repos
+        issues = issues
     )
     AppTemplateTheme {
         HomeScreen(HomeViewModelPreview(state))
@@ -140,10 +126,10 @@ fun HomeScreenPreviewDarkProgress() {
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun HomeScreenPreviewDarkList() {
-    val repos = GitHubRepoCatalog.getList()
+    val issues = GitHubIssueCatalog.getList()
     val state = HomeState(
         progress = false,
-        repos = repos
+        issues = issues
     )
     AppTemplateTheme {
         HomeScreen(HomeViewModelPreview(state))

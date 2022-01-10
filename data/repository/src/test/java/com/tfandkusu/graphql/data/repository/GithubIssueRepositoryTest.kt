@@ -1,42 +1,38 @@
-package com.tfandkusu.graphql.usecase.home
+package com.tfandkusu.graphql.data.repository
 
 import com.tfandkusu.graphql.catalog.GitHubIssueCatalog
-import com.tfandkusu.graphql.data.repository.GithubIssueRepository
+import com.tfandkusu.graphql.data.remote.GithubIssueRemoteDataStore
 import io.kotlintest.shouldBe
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
-import io.mockk.verifySequence
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
 
-class HomeOnCreateUseCaseTest {
+class GithubIssueRepositoryTest {
 
-    @MockK(relaxed = true)
     private lateinit var repository: GithubIssueRepository
 
-    private lateinit var useCase: HomeOnCreateUseCase
+    @MockK
+    private lateinit var remoteDataStore: GithubIssueRemoteDataStore
 
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
-        useCase = HomeOnCreateUseCaseImpl(repository)
+        repository = GithubIssueRepositoryImpl(remoteDataStore)
     }
 
     @Test
-    fun execute() = runBlocking {
+    fun listAsFlow() = runBlocking {
         val issues = GitHubIssueCatalog.getList()
         every {
-            repository.listAsFlow()
+            remoteDataStore.listAsFlow()
         } returns flow {
             emit(issues)
         }
-        useCase.execute().first() shouldBe issues
-        verifySequence {
-            repository.listAsFlow()
-        }
+        repository.listAsFlow().first() shouldBe issues
     }
 }

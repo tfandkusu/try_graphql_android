@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="fork">Fork</string>
+    <string name="open">Open</string>
+    <string name="closed">Closed</string>
     <string name="action_information">Information</string>
 </resources>
