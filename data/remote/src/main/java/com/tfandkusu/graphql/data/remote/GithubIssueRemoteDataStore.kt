@@ -3,6 +3,7 @@ package com.tfandkusu.graphql.data.remote
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.cache.normalized.FetchPolicy
 import com.apollographql.apollo3.cache.normalized.fetchPolicy
+import com.apollographql.apollo3.cache.normalized.watch
 import com.tfandkusu.graphql.api.IssuesQuery
 import com.tfandkusu.graphql.model.GithubIssue
 import javax.inject.Inject
@@ -26,8 +27,7 @@ class GithubIssueRemoteDataStoreImpl @Inject constructor(
                 } else {
                     FetchPolicy.CacheFirst
                 }
-            )
-            .toFlow().map { apolloResponse ->
+            ).watch().map { apolloResponse ->
                 apolloResponse.data?.viewer?.repository?.issues?.edges?.mapNotNull { edge ->
                     edge?.node
                 }?.map {
