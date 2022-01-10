@@ -3,14 +3,4 @@
     <!-- Open -->
     <color name="open">#4caf50</color>
     <color name="closed">#673ab7</color>
-    <!-- Programing language colors-->
-    <color name="kotlin">#4caf50</color>
-    <color name="cpp">#3f51b5</color>
-    <color name="dart">#03a9f4</color>
-    <color name="python">#ffc107</color>
-    <color name="java">#f44336</color>
-    <color name="html">#ff5722</color>
-    <color name="other">#607d8b</color>
-    <!-- Fork label background -->
-    <color name="forkBackground">#666</color>
 </resources>

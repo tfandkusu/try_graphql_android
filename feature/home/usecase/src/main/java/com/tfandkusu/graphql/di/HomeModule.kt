@@ -1,7 +1,5 @@
 package com.tfandkusu.graphql.di
 
-import com.tfandkusu.graphql.usecase.home.HomeLoadUseCase
-import com.tfandkusu.graphql.usecase.home.HomeLoadUseCaseImpl
 import com.tfandkusu.graphql.usecase.home.HomeOnCreateUseCase
 import com.tfandkusu.graphql.usecase.home.HomeOnCreateUseCaseImpl
 import dagger.Binds
@@ -13,12 +11,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class HomeModule {
-    @Binds
-    @Singleton
-    abstract fun bindHomeLoadUseCase(
-        useCase: HomeLoadUseCaseImpl
-    ): HomeLoadUseCase
-
     @Binds
     @Singleton
     abstract fun bindOnCreateUseCase(

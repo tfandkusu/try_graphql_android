@@ -1,9 +1,7 @@
 package com.tfandkusu.graphql.usecase.home
 
 import com.tfandkusu.graphql.catalog.GitHubIssueCatalog
-import com.tfandkusu.graphql.catalog.GitHubRepoCatalog
 import com.tfandkusu.graphql.data.repository.GithubIssueRepository
-import com.tfandkusu.graphql.data.repository.GithubRepoRepository
 import io.kotlintest.shouldBe
 import io.mockk.MockKAnnotations
 import io.mockk.every

@@ -1,9 +1,7 @@
 package com.tfandkusu.graphql.usecase.home
 
 import com.tfandkusu.graphql.data.repository.GithubIssueRepository
-import com.tfandkusu.graphql.data.repository.GithubRepoRepository
 import com.tfandkusu.graphql.model.GithubIssue
-import com.tfandkusu.graphql.model.GithubRepo
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 
