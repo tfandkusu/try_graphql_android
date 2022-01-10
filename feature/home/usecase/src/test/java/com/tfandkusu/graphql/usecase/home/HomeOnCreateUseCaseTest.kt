@@ -1,6 +1,8 @@
 package com.tfandkusu.graphql.usecase.home
 
+import com.tfandkusu.graphql.catalog.GitHubIssueCatalog
 import com.tfandkusu.graphql.catalog.GitHubRepoCatalog
+import com.tfandkusu.graphql.data.repository.GithubIssueRepository
 import com.tfandkusu.graphql.data.repository.GithubRepoRepository
 import io.kotlintest.shouldBe
 import io.mockk.MockKAnnotations
@@ -16,7 +18,7 @@ import org.junit.Test
 class HomeOnCreateUseCaseTest {
 
     @MockK(relaxed = true)
-    private lateinit var repository: GithubRepoRepository
+    private lateinit var repository: GithubIssueRepository
 
     private lateinit var useCase: HomeOnCreateUseCase
 
@@ -28,13 +30,13 @@ class HomeOnCreateUseCaseTest {
 
     @Test
     fun execute() = runBlocking {
-        val repos = GitHubRepoCatalog.getList()
+        val issues = GitHubIssueCatalog.getList()
         every {
             repository.listAsFlow()
         } returns flow {
-            emit(repos)
+            emit(issues)
         }
-        useCase.execute().first() shouldBe repos
+        useCase.execute().first() shouldBe issues
         verifySequence {
             repository.listAsFlow()
         }
