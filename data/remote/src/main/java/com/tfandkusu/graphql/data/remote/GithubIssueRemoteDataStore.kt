@@ -8,13 +8,13 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 interface GithubIssueRemoteDataStore {
-    suspend fun listIssues(): Flow<List<GithubIssue>>
+    fun listAsFlow(): Flow<List<GithubIssue>>
 }
 
 class GithubIssueRemoteDataStoreImpl @Inject constructor(
     private val apolloClient: ApolloClient
 ) : GithubIssueRemoteDataStore {
-    override suspend fun listIssues(): Flow<List<GithubIssue>> {
+    override fun listAsFlow(): Flow<List<GithubIssue>> {
         val query = IssuesQuery("try_graphql_android")
         return apolloClient.query(query).toFlow().map { apolloResponse ->
             apolloResponse.data?.viewer?.repository?.issues?.edges?.mapNotNull { edge ->
