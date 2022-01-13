@@ -32,19 +32,22 @@ class HomeViewModelImpl @Inject constructor(
 
     override fun event(event: HomeEvent) {
         viewModelScope.launch {
-            if (event is HomeEvent.OnCreate) {
-                onCreateUseCase.execute().collect { issues ->
-                    _state.update {
-                        copy(issues = issues, progress = false)
+            when (event) {
+                HomeEvent.OnCreate -> {
+                    onCreateUseCase.execute().collect { issues ->
+                        _state.update {
+                            copy(issues = issues, progress = false)
+                        }
                     }
                 }
-            } else if (event is HomeEvent.Reload) {
-                _state.update {
-                    copy(refresh = true)
-                }
-                reloadUseCase.execute()
-                _state.update {
-                    copy(refresh = false)
+                HomeEvent.Reload -> {
+                    _state.update {
+                        copy(refresh = true)
+                    }
+                    reloadUseCase.execute()
+                    _state.update {
+                        copy(refresh = false)
+                    }
                 }
             }
         }
