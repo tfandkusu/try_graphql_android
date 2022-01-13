@@ -5,11 +5,13 @@ import com.tfandkusu.graphql.viewmodel.UnidirectionalViewModel
 
 sealed class HomeEvent {
     object OnCreate : HomeEvent()
+    object Reload : HomeEvent()
 }
 
 sealed class HomeEffect
 data class HomeState(
     val progress: Boolean = true,
+    val refresh: Boolean = false,
     val issues: List<GithubIssue> = listOf()
 )
 

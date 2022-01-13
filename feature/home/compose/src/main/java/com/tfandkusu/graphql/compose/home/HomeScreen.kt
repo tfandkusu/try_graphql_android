@@ -21,6 +21,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.tfandkusu.graphql.catalog.GitHubIssueCatalog
 import com.tfandkusu.graphql.compose.TemplateTopAppBar
 import com.tfandkusu.graphql.compose.home.listitem.GitHubIssueListItem
@@ -70,10 +72,17 @@ fun HomeScreen(viewModel: HomeViewModel) {
                 CircularProgressIndicator()
             }
         } else {
-            LazyColumn {
-                state.issues.map {
-                    item(key = it.id) {
-                        GitHubIssueListItem(it)
+            SwipeRefresh(
+                state = rememberSwipeRefreshState(state.refresh),
+                onRefresh = {
+                    viewModel.event(HomeEvent.Reload)
+                }
+            ) {
+                LazyColumn {
+                    state.issues.map {
+                        item(key = it.id) {
+                            GitHubIssueListItem(it)
+                        }
                     }
                 }
             }

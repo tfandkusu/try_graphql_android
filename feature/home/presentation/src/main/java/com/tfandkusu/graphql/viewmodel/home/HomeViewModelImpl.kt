@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tfandkusu.graphql.usecase.home.HomeOnCreateUseCase
+import com.tfandkusu.graphql.usecase.home.HomeReloadUseCase
 import com.tfandkusu.graphql.viewmodel.update
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -15,7 +16,8 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class HomeViewModelImpl @Inject constructor(
-    private val onCreateUseCase: HomeOnCreateUseCase
+    private val onCreateUseCase: HomeOnCreateUseCase,
+    private val reloadUseCase: HomeReloadUseCase
 ) : HomeViewModel, ViewModel() {
 
     override fun createDefaultState() = HomeState()
@@ -30,10 +32,21 @@ class HomeViewModelImpl @Inject constructor(
 
     override fun event(event: HomeEvent) {
         viewModelScope.launch {
-            if (event is HomeEvent.OnCreate) {
-                onCreateUseCase.execute().collect { repos ->
+            when (event) {
+                HomeEvent.OnCreate -> {
+                    onCreateUseCase.execute().collect { issues ->
+                        _state.update {
+                            copy(issues = issues, progress = false)
+                        }
+                    }
+                }
+                HomeEvent.Reload -> {
                     _state.update {
-                        copy(issues = repos, progress = false)
+                        copy(refresh = true)
+                    }
+                    reloadUseCase.execute()
+                    _state.update {
+                        copy(refresh = false)
                     }
                 }
             }

@@ -6,11 +6,11 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 
 interface GithubIssueRepository {
-    fun listAsFlow(): Flow<List<GithubIssue>>
+    fun listAsFlow(reload: Boolean): Flow<List<GithubIssue>>
 }
 
 class GithubIssueRepositoryImpl @Inject constructor(
     private val remoteDataStore: GithubIssueRemoteDataStore
 ) : GithubIssueRepository {
-    override fun listAsFlow() = remoteDataStore.listAsFlow()
+    override fun listAsFlow(reload: Boolean) = remoteDataStore.listAsFlow(reload)
 }
