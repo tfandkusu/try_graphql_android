@@ -34,14 +34,6 @@ play-services-oss-licenses = 'com.google.android.gms:play-services-oss-licenses:
 # Apollo
 apollo-runtime = { module = 'com.apollographql.apollo3:apollo-runtime', version.ref = 'apollo' }
 apollo-normalized-cache = { module = 'com.apollographql.apollo3:apollo-normalized-cache', version.ref = 'apollo' }
-# Retrofit
-retrofit-retrofit = { module = 'com.squareup.retrofit2:retrofit', version.ref = 'retrofit' }
-retrofit-moshi = { module = 'com.squareup.retrofit2:converter-moshi', version.ref = 'retrofit' }
-moshi-adapter = 'com.squareup.moshi:moshi-adapters:1.8.0'
-# Room
-room-runtime = { module = 'androidx.room:room-runtime', version.ref = 'room' }
-room-ktx = { module = 'androidx.room:room-ktx', version.ref = 'room' }
-room-compiler = { module = 'androidx.room:room-compiler', version.ref = 'room' }
 # Lifecycle
 lifecycle-viewmodel-ktx = { module = 'androidx.lifecycle:lifecycle-viewmodel-ktx', version.ref = 'lifecycle' }
 lifecycle-viewmodel-compose = { module = 'androidx.lifecycle:lifecycle-viewmodel-compose', version.ref = 'lifecycle' }
