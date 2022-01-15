@@ -2,6 +2,7 @@ apply from: rootProject.file("gradle/build-config.gradle")
 
 dependencies {
     implementation libs.kotlin.coroutines.android
+    implementation libs.timber
     testImplementation libs.junit
     testImplementation libs.mockk
     testImplementation libs.kotest
