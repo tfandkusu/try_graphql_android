@@ -8,4 +8,6 @@
     <string name="reload">Reload</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
+    <!-- Edit screen -->
+    <string name="title_edit">Edit Issue #%d</string>
 </resources>
