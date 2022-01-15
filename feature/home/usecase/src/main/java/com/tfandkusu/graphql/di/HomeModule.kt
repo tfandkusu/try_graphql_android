@@ -1,5 +1,7 @@
 package com.tfandkusu.graphql.di
 
+import com.tfandkusu.graphql.usecase.home.EditOnCreateUseCase
+import com.tfandkusu.graphql.usecase.home.EditOnCreateUseCaseImpl
 import com.tfandkusu.graphql.usecase.home.HomeOnCreateUseCase
 import com.tfandkusu.graphql.usecase.home.HomeOnCreateUseCaseImpl
 import com.tfandkusu.graphql.usecase.home.HomeReloadUseCase
@@ -15,13 +17,19 @@ import javax.inject.Singleton
 abstract class HomeModule {
     @Binds
     @Singleton
-    abstract fun bindOnCreateUseCase(
+    abstract fun bindHomeOnCreateUseCase(
         useCase: HomeOnCreateUseCaseImpl
     ): HomeOnCreateUseCase
 
     @Binds
     @Singleton
-    abstract fun bindReloadUseCase(
+    abstract fun bindHomeReloadUseCase(
         useCase: HomeReloadUseCaseImpl
     ): HomeReloadUseCase
+
+    @Binds
+    @Singleton
+    abstract fun bindEditOnCreateUseCase(
+        useCase: EditOnCreateUseCaseImpl
+    ): EditOnCreateUseCase
 }
