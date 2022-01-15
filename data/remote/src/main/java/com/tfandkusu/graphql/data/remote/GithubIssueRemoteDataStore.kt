@@ -4,7 +4,7 @@ import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.cache.normalized.FetchPolicy
 import com.apollographql.apollo3.cache.normalized.fetchPolicy
 import com.apollographql.apollo3.cache.normalized.watch
-import com.tfandkusu.graphql.api.IssuesQuery
+import com.tfandkusu.graphql.api.ListIssuesQuery
 import com.tfandkusu.graphql.model.GithubIssue
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
@@ -19,7 +19,7 @@ class GithubIssueRemoteDataStoreImpl @Inject constructor(
 ) : GithubIssueRemoteDataStore {
     override fun listAsFlow(networkOnly: Boolean): Flow<List<GithubIssue>> {
         val repositoryName = BuildConfig.REPOSITORY_NAME
-        val query = IssuesQuery(repositoryName)
+        val query = ListIssuesQuery(repositoryName)
         return apolloClient.query(query)
             .fetchPolicy(
                 if (networkOnly) {
