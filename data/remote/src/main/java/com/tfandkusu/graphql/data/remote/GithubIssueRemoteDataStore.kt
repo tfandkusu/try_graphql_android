@@ -4,6 +4,7 @@ import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.cache.normalized.FetchPolicy
 import com.apollographql.apollo3.cache.normalized.fetchPolicy
 import com.apollographql.apollo3.cache.normalized.watch
+import com.tfandkusu.graphql.api.GetIssueQuery
 import com.tfandkusu.graphql.api.ListIssuesQuery
 import com.tfandkusu.graphql.model.GithubIssue
 import javax.inject.Inject
@@ -12,6 +13,8 @@ import kotlinx.coroutines.flow.map
 
 interface GithubIssueRemoteDataStore {
     fun listAsFlow(networkOnly: Boolean): Flow<List<GithubIssue>>
+
+    suspend fun get(number: Int): GithubIssue?
 }
 
 class GithubIssueRemoteDataStoreImpl @Inject constructor(
@@ -38,6 +41,17 @@ class GithubIssueRemoteDataStoreImpl @Inject constructor(
                         it.closed
                     )
                 } ?: listOf()
+            }
+    }
+
+    override suspend fun get(number: Int): GithubIssue? {
+        val ownerName = BuildConfig.OWNER_NAME
+        val repositoryName = BuildConfig.REPOSITORY_NAME
+        return apolloClient.query(GetIssueQuery(ownerName, repositoryName, number))
+            .execute().data?.let { data ->
+                data.repository?.issue?.let {
+                    GithubIssue(it.id, it.number, it.title, it.closed)
+                }
             }
     }
 }
