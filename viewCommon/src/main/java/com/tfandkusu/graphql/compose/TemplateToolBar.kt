@@ -9,10 +9,12 @@ import com.tfandkusu.graphql.viewcommon.R
 @Composable
 fun TemplateTopAppBar(
     title: @Composable () -> Unit,
+    navigationIcon: (@Composable () -> Unit)? = null,
     actions: @Composable RowScope.() -> Unit = {}
 ) {
     TopAppBar(
         title = title,
+        navigationIcon = navigationIcon,
         actions = actions,
         backgroundColor = colorResource(R.color.top_app_bar)
     )

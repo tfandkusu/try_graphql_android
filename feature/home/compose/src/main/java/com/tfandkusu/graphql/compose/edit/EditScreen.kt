@@ -10,10 +10,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Switch
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -37,7 +41,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 @Composable
-fun EditScreen(viewModel: EditViewModel, number: Int) {
+fun EditScreen(viewModel: EditViewModel, number: Int, backToHome: () -> Unit) {
     LaunchedEffect(Unit) {
         viewModel.event(EditEvent.OnCreate(number))
     }
@@ -47,7 +51,17 @@ fun EditScreen(viewModel: EditViewModel, number: Int) {
             TemplateTopAppBar(
                 title = {
                     Text(stringResource(R.string.title_edit, number))
-                }
+                },
+                navigationIcon = {
+                    IconButton(onClick = {
+                        backToHome()
+                    }) {
+                        Icon(
+                            Icons.Default.ArrowBack,
+                            contentDescription = stringResource(R.string.action_back_to_home)
+                        )
+                    }
+                },
             )
         }
     ) {
@@ -104,7 +118,8 @@ fun EditScreenPreview() {
         true,
     )
     AppTemplateTheme {
-        EditScreen(EditViewModelPreview(state), issue.number)
+        EditScreen(EditViewModelPreview(state), issue.number) {
+        }
     }
 }
 

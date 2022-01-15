@@ -31,7 +31,9 @@ fun AppContent() {
             )
         ) { backStackEntry ->
             val viewModel = hiltViewModel<EditViewModelImpl>()
-            EditScreen(viewModel, backStackEntry.arguments?.getInt("number") ?: 0)
+            EditScreen(viewModel, backStackEntry.arguments?.getInt("number") ?: 0) {
+                navController.popBackStack()
+            }
         }
     }
 }
