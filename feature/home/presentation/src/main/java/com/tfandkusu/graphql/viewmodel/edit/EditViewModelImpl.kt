@@ -47,6 +47,14 @@ class EditViewModelImpl @Inject constructor(
                 is EditEvent.Submit -> {
                 }
                 is EditEvent.UpdateTitle -> {
+                    _state.update {
+                        copy(title = event.title)
+                    }
+                }
+                is EditEvent.UpdateClosed -> {
+                    _state.update {
+                        copy(closed = event.closed)
+                    }
                 }
             }
         }

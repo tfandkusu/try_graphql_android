@@ -8,6 +8,7 @@ import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerifySequence
 import io.mockk.impl.annotations.MockK
+import io.mockk.verifySequence
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineDispatcher
@@ -71,6 +72,26 @@ class EditViewModelTest {
                     true
                 )
             )
+        }
+    }
+
+    @Test
+    fun updateTitle() {
+        val mockStateObserver = viewModel.state.mockStateObserver()
+        viewModel.event(EditEvent.UpdateTitle("Updated"))
+        verifySequence {
+            mockStateObserver.onChanged(EditState())
+            mockStateObserver.onChanged(EditState(title = "Updated"))
+        }
+    }
+
+    @Test
+    fun updateClosed() {
+        val mockStateObserver = viewModel.state.mockStateObserver()
+        viewModel.event(EditEvent.UpdateClosed(true))
+        verifySequence {
+            mockStateObserver.onChanged(EditState())
+            mockStateObserver.onChanged(EditState(closed = true))
         }
     }
 }
