@@ -1,7 +1,9 @@
 package com.tfandkusu.graphql.di
 
-import com.tfandkusu.graphql.usecase.home.EditOnCreateUseCase
-import com.tfandkusu.graphql.usecase.home.EditOnCreateUseCaseImpl
+import com.tfandkusu.graphql.usecase.edit.EditOnCreateUseCase
+import com.tfandkusu.graphql.usecase.edit.EditOnCreateUseCaseImpl
+import com.tfandkusu.graphql.usecase.edit.EditSubmitUseCase
+import com.tfandkusu.graphql.usecase.edit.EditSubmitUseCaseImpl
 import com.tfandkusu.graphql.usecase.home.HomeOnCreateUseCase
 import com.tfandkusu.graphql.usecase.home.HomeOnCreateUseCaseImpl
 import com.tfandkusu.graphql.usecase.home.HomeReloadUseCase
@@ -32,4 +34,10 @@ abstract class HomeModule {
     abstract fun bindEditOnCreateUseCase(
         useCase: EditOnCreateUseCaseImpl
     ): EditOnCreateUseCase
+
+    @Binds
+    @Singleton
+    abstract fun bindEditSubmitUseCase(
+        useCase: EditSubmitUseCaseImpl
+    ): EditSubmitUseCase
 }

@@ -2,8 +2,11 @@ package com.tfandkusu.graphql.viewmodel.edit
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.tfandkusu.graphql.catalog.GitHubIssueCatalog
-import com.tfandkusu.graphql.usecase.home.EditOnCreateUseCase
+import com.tfandkusu.graphql.model.GithubIssue
+import com.tfandkusu.graphql.usecase.edit.EditOnCreateUseCase
+import com.tfandkusu.graphql.usecase.edit.EditSubmitUseCase
 import com.tfandkusu.graphql.viewmodel.mockStateObserver
+import io.kotlintest.shouldBe
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerifySequence
@@ -11,6 +14,7 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.verifySequence
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runBlockingTest
@@ -32,6 +36,9 @@ class EditViewModelTest {
     @MockK(relaxed = true)
     private lateinit var onCreateUseCase: EditOnCreateUseCase
 
+    @MockK(relaxed = true)
+    private lateinit var submitUseCase: EditSubmitUseCase
+
     private lateinit var viewModel: EditViewModel
 
     @ExperimentalCoroutinesApi
@@ -40,7 +47,8 @@ class EditViewModelTest {
         Dispatchers.setMain(testDispatcher)
         MockKAnnotations.init(this)
         viewModel = EditViewModelImpl(
-            onCreateUseCase
+            onCreateUseCase,
+            submitUseCase
         )
     }
 
@@ -97,5 +105,25 @@ class EditViewModelTest {
             mockStateObserver.onChanged(EditState())
             mockStateObserver.onChanged(EditState(closed = true))
         }
+    }
+
+    @ExperimentalCoroutinesApi
+    @Test
+    fun submit() = testDispatcher.runBlockingTest {
+        val mockStateObserver = viewModel.state.mockStateObserver()
+        viewModel.event(EditEvent.Submit("id_1", "Title 1", true))
+        coVerifySequence {
+            mockStateObserver.onChanged(EditState())
+            mockStateObserver.onChanged(EditState(progress = true))
+            submitUseCase.execute(
+                GithubIssue(
+                    "id_1",
+                    0,
+                    "Title 1",
+                    true
+                )
+            )
+        }
+        viewModel.effect.first() shouldBe EditEffect.BackToHome
     }
 }

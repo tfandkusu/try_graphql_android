@@ -19,7 +19,7 @@ class GithubIssueRepositoryTest {
 
     private lateinit var repository: GithubIssueRepository
 
-    @MockK
+    @MockK(relaxed = true)
     private lateinit var remoteDataStore: GithubIssueRemoteDataStore
 
     @Before
@@ -65,6 +65,15 @@ class GithubIssueRepositoryTest {
         repository.get(1) shouldBe issue
         coVerifySequence {
             remoteDataStore.get(1)
+        }
+    }
+
+    @Test
+    fun update() = runBlocking {
+        val issue = GitHubIssueCatalog.getList().last()
+        repository.update(issue)
+        coVerifySequence {
+            remoteDataStore.update(issue)
         }
     }
 }

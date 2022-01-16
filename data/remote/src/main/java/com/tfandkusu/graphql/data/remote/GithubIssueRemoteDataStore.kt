@@ -6,6 +6,8 @@ import com.apollographql.apollo3.cache.normalized.fetchPolicy
 import com.apollographql.apollo3.cache.normalized.watch
 import com.tfandkusu.graphql.api.GetIssueQuery
 import com.tfandkusu.graphql.api.ListIssuesQuery
+import com.tfandkusu.graphql.api.UpdateIssueMutation
+import com.tfandkusu.graphql.api.type.IssueState
 import com.tfandkusu.graphql.model.GithubIssue
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
@@ -15,6 +17,8 @@ interface GithubIssueRemoteDataStore {
     fun listAsFlow(networkOnly: Boolean): Flow<List<GithubIssue>>
 
     suspend fun get(number: Int): GithubIssue?
+
+    suspend fun update(issue: GithubIssue)
 }
 
 class GithubIssueRemoteDataStoreImpl @Inject constructor(
@@ -53,5 +57,19 @@ class GithubIssueRemoteDataStoreImpl @Inject constructor(
                     GithubIssue(it.id, it.number, it.title, it.closed)
                 }
             }
+    }
+
+    override suspend fun update(issue: GithubIssue) {
+        apolloClient.mutation(
+            UpdateIssueMutation(
+                issue.id,
+                if (issue.closed) {
+                    IssueState.CLOSED
+                } else {
+                    IssueState.OPEN
+                },
+                issue.title,
+            )
+        ).execute()
     }
 }

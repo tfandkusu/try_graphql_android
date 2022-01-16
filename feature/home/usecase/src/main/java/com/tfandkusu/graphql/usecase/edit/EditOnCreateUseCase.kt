@@ -1,4 +1,4 @@
-package com.tfandkusu.graphql.usecase.home
+package com.tfandkusu.graphql.usecase.edit
 
 import com.tfandkusu.graphql.data.repository.GithubIssueRepository
 import com.tfandkusu.graphql.model.GithubIssue

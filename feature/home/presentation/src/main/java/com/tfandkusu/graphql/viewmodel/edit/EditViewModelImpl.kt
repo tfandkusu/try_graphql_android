@@ -4,7 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.tfandkusu.graphql.usecase.home.EditOnCreateUseCase
+import com.tfandkusu.graphql.model.GithubIssue
+import com.tfandkusu.graphql.usecase.edit.EditOnCreateUseCase
+import com.tfandkusu.graphql.usecase.edit.EditSubmitUseCase
 import com.tfandkusu.graphql.viewmodel.update
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -14,7 +16,8 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class EditViewModelImpl @Inject constructor(
-    private val onCreateUseCase: EditOnCreateUseCase
+    private val onCreateUseCase: EditOnCreateUseCase,
+    private val submitUseCase: EditSubmitUseCase
 ) : EditViewModel, ViewModel() {
     override fun createDefaultState() = EditState()
 
@@ -53,6 +56,14 @@ class EditViewModelImpl @Inject constructor(
                     _state.update {
                         copy(progress = true)
                     }
+                    submitUseCase.execute(
+                        GithubIssue(
+                            event.id,
+                            0,
+                            event.title,
+                            event.closed
+                        )
+                    )
                     effectChannel.send(EditEffect.BackToHome)
                 }
                 is EditEvent.UpdateTitle -> {

@@ -9,6 +9,8 @@ interface GithubIssueRepository {
     fun listAsFlow(reload: Boolean): Flow<List<GithubIssue>>
 
     suspend fun get(number: Int): GithubIssue?
+
+    suspend fun update(issue: GithubIssue)
 }
 
 class GithubIssueRepositoryImpl @Inject constructor(
@@ -17,4 +19,8 @@ class GithubIssueRepositoryImpl @Inject constructor(
     override fun listAsFlow(reload: Boolean) = remoteDataStore.listAsFlow(reload)
 
     override suspend fun get(number: Int) = remoteDataStore.get(number)
+
+    override suspend fun update(issue: GithubIssue) {
+        remoteDataStore.update(issue)
+    }
 }
