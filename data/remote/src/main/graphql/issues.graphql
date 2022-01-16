@@ -26,10 +26,11 @@ query getIssue($owner: String!, $repo_name: String!, $number: Int!) {
     }
 }
 
-mutation updateIssue($id: ID!, $state: IssueState!, $title: String!) {
-    updateIssue(input: {id: $id, state: $state, title: $title}) {
+mutation updateIssueTitle($id: ID!, $title: String!) {
+    updateIssue(input: {id: $id, title: $title}) {
         issue {
             title
+            number
             closed
             id
         }
