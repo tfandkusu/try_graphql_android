@@ -7,7 +7,7 @@ sealed class EditEvent {
     data class UpdateTitle(val title: String) : EditEvent()
     data class UpdateClosed(val closed: Boolean) : EditEvent()
     data class Submit(
-        val number: Int?,
+        val id: String?,
         val title: String,
         val closed: Boolean
     ) : EditEvent()
@@ -19,6 +19,7 @@ sealed class EditEffect {
 
 data class EditState(
     val progress: Boolean = true,
+    val id: String? = null,
     val title: String = "",
     val closed: Boolean = false,
     val submitEnabled: Boolean = false

@@ -40,6 +40,7 @@ class EditViewModelImpl @Inject constructor(
                             _state.update {
                                 copy(
                                     progress = false,
+                                    id = it.id,
                                     title = it.title,
                                     closed = it.closed,
                                     submitEnabled = it.title.isNotEmpty()

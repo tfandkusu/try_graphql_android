@@ -68,6 +68,7 @@ class EditViewModelTest {
             mockStateObserver.onChanged(
                 EditState(
                     false,
+                    "id_1",
                     issue.title,
                     issue.closed,
                     true

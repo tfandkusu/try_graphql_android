@@ -119,7 +119,7 @@ fun EditScreen(viewModel: EditViewModel, number: Int, backToHome: () -> Unit) {
                     onClick = {
                         viewModel.event(
                             EditEvent.Submit(
-                                number,
+                                state.id,
                                 state.title,
                                 state.closed
                             )
@@ -140,7 +140,8 @@ fun EditScreen(viewModel: EditViewModel, number: Int, backToHome: () -> Unit) {
 fun EditScreenPreview() {
     val issue = GitHubIssueCatalog.getList().last()
     val state = EditState(
-        progress = false,
+        false,
+        "id_1",
         issue.title,
         issue.closed,
         true,
