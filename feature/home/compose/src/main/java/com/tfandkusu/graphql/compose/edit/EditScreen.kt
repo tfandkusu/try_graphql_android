@@ -6,9 +6,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.Button
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -88,7 +90,7 @@ fun EditScreen(viewModel: EditViewModel, number: Int, backToHome: () -> Unit) {
                 )
                 Row(
                     modifier = Modifier.fillMaxWidth()
-                        .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+                        .padding(horizontal = 16.dp)
                 ) {
                     Text(
                         stringResource(R.string.edit_label_closed)
@@ -101,6 +103,15 @@ fun EditScreen(viewModel: EditViewModel, number: Int, backToHome: () -> Unit) {
                         },
                     )
                 }
+                Spacer(modifier = Modifier.height(16.dp))
+                Button(
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    onClick = {
+                    }
+                ) {
+                    Text(stringResource(R.string.edit_update))
+                }
+                Spacer(modifier = Modifier.height(16.dp))
             }
         }
     }
