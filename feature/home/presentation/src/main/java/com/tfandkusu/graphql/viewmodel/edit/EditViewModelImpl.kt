@@ -27,20 +27,25 @@ class EditViewModelImpl @Inject constructor(
 
     override val effect: Flow<EditEffect> = effectChannel.receiveAsFlow()
 
+    private var firstOnCreate = true
+
     override fun event(event: EditEvent) {
         viewModelScope.launch {
             when (event) {
                 is EditEvent.OnCreate -> {
-                    val issue = onCreateUseCase.execute(event.number)
-                    issue?.let {
-                        _state.update {
-                            copy(
-                                progress = false,
-                                number = it.number,
-                                title = it.title,
-                                closed = it.closed,
-                                submitEnabled = it.title.isNotEmpty()
-                            )
+                    if (firstOnCreate) {
+                        firstOnCreate = false
+                        val issue = onCreateUseCase.execute(event.number)
+                        issue?.let {
+                            _state.update {
+                                copy(
+                                    progress = false,
+                                    number = it.number,
+                                    title = it.title,
+                                    closed = it.closed,
+                                    submitEnabled = it.title.isNotEmpty()
+                                )
+                            }
                         }
                     }
                 }

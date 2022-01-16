@@ -60,6 +60,8 @@ class EditViewModelTest {
         } returns issue
         val mockStateObserver = viewModel.state.mockStateObserver()
         viewModel.event(EditEvent.OnCreate(1))
+        // This process is executed only once.
+        viewModel.event(EditEvent.OnCreate(1))
         coVerifySequence {
             mockStateObserver.onChanged(EditState())
             onCreateUseCase.execute(1)
