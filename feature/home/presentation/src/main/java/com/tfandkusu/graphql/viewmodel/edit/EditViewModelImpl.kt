@@ -40,7 +40,6 @@ class EditViewModelImpl @Inject constructor(
                             _state.update {
                                 copy(
                                     progress = false,
-                                    number = it.number,
                                     title = it.title,
                                     closed = it.closed,
                                     submitEnabled = it.title.isNotEmpty()
@@ -50,10 +49,17 @@ class EditViewModelImpl @Inject constructor(
                     }
                 }
                 is EditEvent.Submit -> {
+                    _state.update {
+                        copy(progress = true)
+                    }
+                    effectChannel.send(EditEffect.BackToHome)
                 }
                 is EditEvent.UpdateTitle -> {
                     _state.update {
-                        copy(title = event.title)
+                        copy(
+                            title = event.title,
+                            submitEnabled = event.title.isNotEmpty()
+                        )
                     }
                 }
                 is EditEvent.UpdateClosed -> {

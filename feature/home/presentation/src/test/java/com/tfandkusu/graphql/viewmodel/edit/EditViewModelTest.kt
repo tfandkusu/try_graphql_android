@@ -68,7 +68,6 @@ class EditViewModelTest {
             mockStateObserver.onChanged(
                 EditState(
                     false,
-                    1,
                     issue.title,
                     issue.closed,
                     true
@@ -81,9 +80,11 @@ class EditViewModelTest {
     fun updateTitle() {
         val mockStateObserver = viewModel.state.mockStateObserver()
         viewModel.event(EditEvent.UpdateTitle("Updated"))
+        viewModel.event(EditEvent.UpdateTitle(""))
         verifySequence {
             mockStateObserver.onChanged(EditState())
-            mockStateObserver.onChanged(EditState(title = "Updated"))
+            mockStateObserver.onChanged(EditState(title = "Updated", submitEnabled = true))
+            mockStateObserver.onChanged(EditState(title = "", submitEnabled = false))
         }
     }
 

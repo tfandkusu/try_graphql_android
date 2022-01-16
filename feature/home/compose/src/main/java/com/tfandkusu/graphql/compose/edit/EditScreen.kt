@@ -40,6 +40,7 @@ import com.tfandkusu.graphql.viewmodel.edit.EditState
 import com.tfandkusu.graphql.viewmodel.edit.EditViewModel
 import com.tfandkusu.graphql.viewmodel.useState
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 
 @Composable
@@ -48,6 +49,15 @@ fun EditScreen(viewModel: EditViewModel, number: Int, backToHome: () -> Unit) {
         viewModel.event(EditEvent.OnCreate(number))
     }
     val state = useState(viewModel)
+    LaunchedEffect(Unit) {
+        viewModel.effect.collect { effect ->
+            when (effect) {
+                EditEffect.BackToHome -> {
+                    backToHome()
+                }
+            }
+        }
+    }
     Scaffold(
         topBar = {
             TemplateTopAppBar(
@@ -107,7 +117,15 @@ fun EditScreen(viewModel: EditViewModel, number: Int, backToHome: () -> Unit) {
                 Button(
                     modifier = Modifier.align(Alignment.CenterHorizontally),
                     onClick = {
-                    }
+                        viewModel.event(
+                            EditEvent.Submit(
+                                number,
+                                state.title,
+                                state.closed
+                            )
+                        )
+                    },
+                    enabled = state.submitEnabled
                 ) {
                     Text(stringResource(R.string.edit_update))
                 }
@@ -123,7 +141,6 @@ fun EditScreenPreview() {
     val issue = GitHubIssueCatalog.getList().last()
     val state = EditState(
         progress = false,
-        issue.number,
         issue.title,
         issue.closed,
         true,
