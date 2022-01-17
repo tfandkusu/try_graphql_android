@@ -1,4 +1,4 @@
-query Issues($repo_name: String!) {
+query listIssues( $repo_name: String!) {
     viewer {
         repository(name: $repo_name) {
             issues(first: 10, orderBy: {field: CREATED_AT, direction: DESC}) {
@@ -11,6 +11,33 @@ query Issues($repo_name: String!) {
                     }
                 }
             }
+        }
+    }
+}
+
+query getIssue($owner: String!, $repo_name: String!, $number: Int!) {
+    repository(name: $repo_name, owner: $owner) {
+        issue(number: $number) {
+            id
+            number
+            title
+            closed
+        }
+    }
+}
+
+mutation updateIssueTitle($id: ID!, $title: String!) {
+    updateIssue(input: {id: $id, title: $title}) {
+        issue {
+            id
+        }
+    }
+}
+
+mutation updateIssueState($id: ID!, $state: IssueState!) {
+    updateIssue(input: {id: $id, state: $state}) {
+        issue {
+            id
         }
     }
 }

@@ -66,6 +66,7 @@ All libraries used are defined in [lib.versions.toml](https://github.com/tfandku
 ## Other
 
 - [OSS Licenses Gradle Plugin](https://github.com/google/play-services-plugins/tree/master/oss-licenses-plugin)
+- [Timber](https://github.com/JakeWharton/timber)
 
 # References
 

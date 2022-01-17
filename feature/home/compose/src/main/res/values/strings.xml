@@ -3,4 +3,7 @@
     <string name="open">Open</string>
     <string name="closed">Closed</string>
     <string name="action_information">Information</string>
+    <string name="action_back_to_home">Back to home</string>
+    <string name="edit_update">Update</string>
+    <string name="edit_add">Add</string>
 </resources>

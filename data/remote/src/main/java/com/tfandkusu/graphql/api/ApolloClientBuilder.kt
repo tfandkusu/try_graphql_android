@@ -11,7 +11,7 @@ object ApolloClientBuilder {
     fun build(): ApolloClient {
         val memoryCacheFactory = MemoryCacheFactory(
             maxSizeBytes = 10 * 1024 * 1024,
-            expireAfterMillis = 10 * 1000
+            expireAfterMillis = 10 * 60 * 1000
         )
         val okHttpClient = OkHttpClient.Builder()
             .addInterceptor { chain ->

@@ -4,7 +4,11 @@ import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.cache.normalized.FetchPolicy
 import com.apollographql.apollo3.cache.normalized.fetchPolicy
 import com.apollographql.apollo3.cache.normalized.watch
-import com.tfandkusu.graphql.api.IssuesQuery
+import com.tfandkusu.graphql.api.GetIssueQuery
+import com.tfandkusu.graphql.api.ListIssuesQuery
+import com.tfandkusu.graphql.api.UpdateIssueStateMutation
+import com.tfandkusu.graphql.api.UpdateIssueTitleMutation
+import com.tfandkusu.graphql.api.type.IssueState
 import com.tfandkusu.graphql.model.GithubIssue
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
@@ -12,6 +16,10 @@ import kotlinx.coroutines.flow.map
 
 interface GithubIssueRemoteDataStore {
     fun listAsFlow(networkOnly: Boolean): Flow<List<GithubIssue>>
+
+    suspend fun get(networkOnly: Boolean, number: Int): GithubIssue?
+
+    suspend fun update(issue: GithubIssue)
 }
 
 class GithubIssueRemoteDataStoreImpl @Inject constructor(
@@ -19,7 +27,7 @@ class GithubIssueRemoteDataStoreImpl @Inject constructor(
 ) : GithubIssueRemoteDataStore {
     override fun listAsFlow(networkOnly: Boolean): Flow<List<GithubIssue>> {
         val repositoryName = BuildConfig.REPOSITORY_NAME
-        val query = IssuesQuery(repositoryName)
+        val query = ListIssuesQuery(repositoryName)
         return apolloClient.query(query)
             .fetchPolicy(
                 if (networkOnly) {
@@ -39,5 +47,42 @@ class GithubIssueRemoteDataStoreImpl @Inject constructor(
                     )
                 } ?: listOf()
             }
+    }
+
+    override suspend fun get(networkOnly: Boolean, number: Int): GithubIssue? {
+        val ownerName = BuildConfig.OWNER_NAME
+        val repositoryName = BuildConfig.REPOSITORY_NAME
+        return apolloClient.query(GetIssueQuery(ownerName, repositoryName, number))
+            .fetchPolicy(
+                if (networkOnly) {
+                    FetchPolicy.NetworkOnly
+                } else {
+                    FetchPolicy.CacheFirst
+                }
+            )
+            .execute().data?.let { data ->
+                data.repository?.issue?.let {
+                    GithubIssue(it.id, it.number, it.title, it.closed)
+                }
+            }
+    }
+
+    override suspend fun update(issue: GithubIssue) {
+        apolloClient.mutation(
+            UpdateIssueTitleMutation(
+                issue.id,
+                issue.title,
+            )
+        ).execute()
+        apolloClient.mutation(
+            UpdateIssueStateMutation(
+                issue.id,
+                if (issue.closed) {
+                    IssueState.CLOSED
+                } else {
+                    IssueState.OPEN
+                },
+            )
+        ).execute()
     }
 }

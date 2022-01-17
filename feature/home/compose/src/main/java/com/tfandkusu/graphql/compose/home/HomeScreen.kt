@@ -38,7 +38,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 @Composable
-fun HomeScreen(viewModel: HomeViewModel) {
+fun HomeScreen(
+    viewModel: HomeViewModel,
+    editIssue: (number: Int) -> Unit
+) {
     LaunchedEffect(Unit) {
         viewModel.event(HomeEvent.OnCreate)
     }
@@ -81,7 +84,9 @@ fun HomeScreen(viewModel: HomeViewModel) {
                 LazyColumn {
                     state.issues.map {
                         item(key = it.id) {
-                            GitHubIssueListItem(it)
+                            GitHubIssueListItem(it) { number ->
+                                editIssue(number)
+                            }
                         }
                     }
                 }
@@ -107,7 +112,8 @@ class HomeViewModelPreview(private val previewState: HomeState) : HomeViewModel 
 @Preview
 fun HomeScreenPreviewProgress() {
     AppTemplateTheme {
-        HomeScreen(HomeViewModelPreview(HomeState()))
+        HomeScreen(HomeViewModelPreview(HomeState())) {
+        }
     }
 }
 
@@ -120,7 +126,8 @@ fun HomeScreenPreviewList() {
         issues = issues
     )
     AppTemplateTheme {
-        HomeScreen(HomeViewModelPreview(state))
+        HomeScreen(HomeViewModelPreview(state)) {
+        }
     }
 }
 
@@ -128,7 +135,8 @@ fun HomeScreenPreviewList() {
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun HomeScreenPreviewDarkProgress() {
     AppTemplateTheme {
-        HomeScreen(HomeViewModelPreview(HomeState()))
+        HomeScreen(HomeViewModelPreview(HomeState())) {
+        }
     }
 }
 
@@ -141,6 +149,7 @@ fun HomeScreenPreviewDarkList() {
         issues = issues
     )
     AppTemplateTheme {
-        HomeScreen(HomeViewModelPreview(state))
+        HomeScreen(HomeViewModelPreview(state)) {
+        }
     }
 }

@@ -15,7 +15,6 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -30,13 +29,13 @@ import com.tfandkusu.graphql.model.GithubIssue
 import com.tfandkusu.graphql.ui.theme.AppTemplateTheme
 
 @Composable
-fun GitHubIssueListItem(issue: GithubIssue) {
-    val context = LocalContext.current
+fun GitHubIssueListItem(
+    issue: GithubIssue,
+    onClick: (number: Int) -> Unit
+) {
     Column(
         modifier = Modifier.clickable {
-//            val intent = Intent(Intent.ACTION_VIEW)
-//            intent.data = Uri.parse(.htmlUrl)
-//            context.startActivity(intent)
+            onClick(issue.number)
         }
     ) {
         // Title
@@ -96,7 +95,8 @@ fun GitHubIssueListItemPreviewNormal() {
     AppTemplateTheme {
         GitHubIssueListItem(
             GitHubIssueCatalog.getList().first()
-        )
+        ) {
+        }
     }
 }
 
@@ -106,7 +106,8 @@ fun GitHubIssueListItemPreviewDark() {
     AppTemplateTheme {
         GitHubIssueListItem(
             GitHubIssueCatalog.getList().first().copy(closed = true)
-        )
+        ) {
+        }
     }
 }
 
@@ -123,6 +124,7 @@ fun GitHubIssueListItemPreviewLong() {
                 },
                 false
             )
-        )
+        ) {
+        }
     }
 }

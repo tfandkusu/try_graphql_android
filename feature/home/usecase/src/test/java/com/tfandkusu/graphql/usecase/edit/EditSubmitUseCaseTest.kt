@@ -1,5 +1,6 @@
-package com.tfandkusu.graphql.usecase.home
+package com.tfandkusu.graphql.usecase.edit
 
+import com.tfandkusu.graphql.catalog.GitHubIssueCatalog
 import com.tfandkusu.graphql.data.repository.GithubIssueRepository
 import io.mockk.MockKAnnotations
 import io.mockk.coVerifySequence
@@ -8,24 +9,25 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
 
-class HomeReloadUseCaseTest {
-
-    private lateinit var useCase: HomeReloadUseCase
+class EditSubmitUseCaseTest {
 
     @MockK(relaxed = true)
     private lateinit var repository: GithubIssueRepository
 
+    private lateinit var useCase: EditSubmitUseCase
+
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
-        useCase = HomeReloadUseCaseImpl(repository)
+        useCase = EditSubmitUseCaseImpl(repository)
     }
 
     @Test
     fun execute() = runBlocking {
-        useCase.execute()
+        val issue = GitHubIssueCatalog.getList().last()
+        useCase.execute(issue)
         coVerifySequence {
-            repository.reload()
+            repository.update(issue)
         }
     }
 }

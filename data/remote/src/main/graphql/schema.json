@@ -81907,6 +81907,18 @@
             "deprecationReason": null
           },
           {
+            "name": "ADDED_TO_MERGE_QUEUE_EVENT",
+            "description": "Represents a 'added_to_merge_queue' event on a given pull request.",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "REMOVED_FROM_MERGE_QUEUE_EVENT",
+            "description": "Represents a 'removed_from_merge_queue' event on a given pull request.",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "ISSUE_COMMENT",
             "description": "Represents a comment on an Issue.",
             "isDeprecated": false,
