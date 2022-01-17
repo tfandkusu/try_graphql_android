@@ -66,7 +66,9 @@ fun EditScreen(viewModel: EditViewModel, number: Int, backToHome: () -> Unit) {
                 },
                 navigationIcon = {
                     IconButton(onClick = {
-                        backToHome()
+                        if (!state.progress) {
+                            backToHome()
+                        }
                     }) {
                         Icon(
                             Icons.Default.ArrowBack,
