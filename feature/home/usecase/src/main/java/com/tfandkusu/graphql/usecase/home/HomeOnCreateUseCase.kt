@@ -12,5 +12,5 @@ interface HomeOnCreateUseCase {
 class HomeOnCreateUseCaseImpl @Inject constructor(
     private val repository: GithubIssueRepository
 ) : HomeOnCreateUseCase {
-    override fun execute() = repository.listAsFlow(false)
+    override fun execute() = repository.listAsFlow()
 }

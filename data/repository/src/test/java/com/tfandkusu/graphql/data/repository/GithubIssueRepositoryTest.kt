@@ -29,28 +29,28 @@ class GithubIssueRepositoryTest {
     }
 
     @Test
-    fun listAsFlowCache() = runBlocking {
+    fun listAsFlow() = runBlocking {
         val issues = GitHubIssueCatalog.getList()
         every {
             remoteDataStore.listAsFlow(false)
         } returns flow {
             emit(issues)
         }
-        repository.listAsFlow(false).first() shouldBe issues
+        repository.listAsFlow().first() shouldBe issues
         verifySequence {
             remoteDataStore.listAsFlow(false)
         }
     }
 
     @Test
-    fun listAsFlowReload() = runBlocking {
+    fun reload() = runBlocking {
         val issues = GitHubIssueCatalog.getList()
         every {
             remoteDataStore.listAsFlow(true)
         } returns flow {
             emit(issues)
         }
-        repository.listAsFlow(true).first() shouldBe issues
+        repository.reload()
         verifySequence {
             remoteDataStore.listAsFlow(true)
         }

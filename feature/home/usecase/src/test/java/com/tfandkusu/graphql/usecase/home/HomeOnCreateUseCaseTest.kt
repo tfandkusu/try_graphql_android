@@ -30,13 +30,13 @@ class HomeOnCreateUseCaseTest {
     fun execute() = runBlocking {
         val issues = GitHubIssueCatalog.getList()
         every {
-            repository.listAsFlow(false)
+            repository.listAsFlow()
         } returns flow {
             emit(issues)
         }
         useCase.execute().first() shouldBe issues
         verifySequence {
-            repository.listAsFlow(false)
+            repository.listAsFlow()
         }
     }
 }
