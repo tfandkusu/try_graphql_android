@@ -6,7 +6,9 @@ import com.apollographql.apollo3.cache.normalized.fetchPolicy
 import com.apollographql.apollo3.cache.normalized.watch
 import com.tfandkusu.graphql.api.GetIssueQuery
 import com.tfandkusu.graphql.api.ListIssuesQuery
+import com.tfandkusu.graphql.api.UpdateIssueStateMutation
 import com.tfandkusu.graphql.api.UpdateIssueTitleMutation
+import com.tfandkusu.graphql.api.type.IssueState
 import com.tfandkusu.graphql.model.GithubIssue
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
@@ -70,6 +72,16 @@ class GithubIssueRemoteDataStoreImpl @Inject constructor(
             UpdateIssueTitleMutation(
                 issue.id,
                 issue.title,
+            )
+        ).execute()
+        apolloClient.mutation(
+            UpdateIssueStateMutation(
+                issue.id,
+                if (issue.closed) {
+                    IssueState.CLOSED
+                } else {
+                    IssueState.OPEN
+                },
             )
         ).execute()
     }

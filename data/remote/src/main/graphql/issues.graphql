@@ -30,9 +30,14 @@ mutation updateIssueTitle($id: ID!, $title: String!) {
     updateIssue(input: {id: $id, title: $title}) {
         issue {
             id
-            number
-            title
-            closed
+        }
+    }
+}
+
+mutation updateIssueState($id: ID!, $state: IssueState!) {
+    updateIssue(input: {id: $id, state: $state}) {
+        issue {
+            id
         }
     }
 }
