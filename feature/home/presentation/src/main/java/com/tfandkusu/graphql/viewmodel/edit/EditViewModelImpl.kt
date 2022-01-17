@@ -44,6 +44,7 @@ class EditViewModelImpl @Inject constructor(
                                 copy(
                                     progress = false,
                                     id = it.id,
+                                    number = it.number,
                                     title = it.title,
                                     closed = it.closed,
                                     submitEnabled = it.title.isNotEmpty()
@@ -59,7 +60,7 @@ class EditViewModelImpl @Inject constructor(
                     submitUseCase.execute(
                         GithubIssue(
                             event.id,
-                            0,
+                            event.number,
                             event.title,
                             event.closed
                         )

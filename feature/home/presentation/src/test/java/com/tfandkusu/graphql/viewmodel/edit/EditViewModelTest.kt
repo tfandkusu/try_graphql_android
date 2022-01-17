@@ -77,6 +77,7 @@ class EditViewModelTest {
                 EditState(
                     false,
                     "id_1",
+                    1,
                     issue.title,
                     issue.closed,
                     true
@@ -111,14 +112,14 @@ class EditViewModelTest {
     @Test
     fun submit() = testDispatcher.runBlockingTest {
         val mockStateObserver = viewModel.state.mockStateObserver()
-        viewModel.event(EditEvent.Submit("id_1", "Title 1", true))
+        viewModel.event(EditEvent.Submit("id_1", 1, "Title 1", true))
         coVerifySequence {
             mockStateObserver.onChanged(EditState())
             mockStateObserver.onChanged(EditState(progress = true))
             submitUseCase.execute(
                 GithubIssue(
                     "id_1",
-                    0,
+                    1,
                     "Title 1",
                     true
                 )

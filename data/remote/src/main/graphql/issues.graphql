@@ -29,10 +29,10 @@ query getIssue($owner: String!, $repo_name: String!, $number: Int!) {
 mutation updateIssueTitle($id: ID!, $title: String!) {
     updateIssue(input: {id: $id, title: $title}) {
         issue {
-            title
-            number
-            closed
             id
+            number
+            title
+            closed
         }
     }
 }

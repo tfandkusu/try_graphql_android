@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.map
 interface GithubIssueRemoteDataStore {
     fun listAsFlow(networkOnly: Boolean): Flow<List<GithubIssue>>
 
-    suspend fun get(number: Int): GithubIssue?
+    suspend fun get(networkOnly: Boolean, number: Int): GithubIssue?
 
     suspend fun update(issue: GithubIssue)
 }
@@ -47,10 +47,17 @@ class GithubIssueRemoteDataStoreImpl @Inject constructor(
             }
     }
 
-    override suspend fun get(number: Int): GithubIssue? {
+    override suspend fun get(networkOnly: Boolean, number: Int): GithubIssue? {
         val ownerName = BuildConfig.OWNER_NAME
         val repositoryName = BuildConfig.REPOSITORY_NAME
         return apolloClient.query(GetIssueQuery(ownerName, repositoryName, number))
+            .fetchPolicy(
+                if (networkOnly) {
+                    FetchPolicy.NetworkOnly
+                } else {
+                    FetchPolicy.CacheFirst
+                }
+            )
             .execute().data?.let { data ->
                 data.repository?.issue?.let {
                     GithubIssue(it.id, it.number, it.title, it.closed)

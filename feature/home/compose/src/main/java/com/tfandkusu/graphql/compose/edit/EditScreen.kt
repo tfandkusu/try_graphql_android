@@ -120,6 +120,7 @@ fun EditScreen(viewModel: EditViewModel, number: Int, backToHome: () -> Unit) {
                         viewModel.event(
                             EditEvent.Submit(
                                 state.id,
+                                state.number,
                                 state.title,
                                 state.closed
                             )
@@ -142,6 +143,7 @@ fun EditScreenPreview() {
     val state = EditState(
         false,
         "id_1",
+        issue.number,
         issue.title,
         issue.closed,
         true,

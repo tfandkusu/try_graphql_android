@@ -60,20 +60,28 @@ class GithubIssueRepositoryTest {
     fun get() = runBlocking {
         val issue = GitHubIssueCatalog.getList().last()
         coEvery {
-            remoteDataStore.get(1)
+            remoteDataStore.get(false, 1)
         } returns issue
         repository.get(1) shouldBe issue
         coVerifySequence {
-            remoteDataStore.get(1)
+            remoteDataStore.get(false, 1)
         }
     }
 
     @Test
     fun update() = runBlocking {
-        val issue = GitHubIssueCatalog.getList().last()
+        val issues = GitHubIssueCatalog.getList()
+        val issue = issues.last()
+        every {
+            remoteDataStore.listAsFlow(true)
+        } returns flow {
+            emit(issues)
+        }
         repository.update(issue)
         coVerifySequence {
             remoteDataStore.update(issue)
+            remoteDataStore.listAsFlow(true)
+            remoteDataStore.get(true, issue.number)
         }
     }
 }
