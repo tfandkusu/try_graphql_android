@@ -1,18 +1,16 @@
 package com.tfandkusu.graphql.api
 
+import android.content.Context
 import com.apollographql.apollo3.ApolloClient
-import com.apollographql.apollo3.cache.normalized.api.MemoryCacheFactory
 import com.apollographql.apollo3.cache.normalized.normalizedCache
+import com.apollographql.apollo3.cache.normalized.sql.SqlNormalizedCacheFactory
 import com.apollographql.apollo3.network.okHttpClient
 import com.tfandkusu.graphql.data.remote.BuildConfig
 import okhttp3.OkHttpClient
 
 object ApolloClientBuilder {
-    fun build(): ApolloClient {
-        val memoryCacheFactory = MemoryCacheFactory(
-            maxSizeBytes = 10 * 1024 * 1024,
-            expireAfterMillis = 10 * 60 * 1000
-        )
+    fun build(context: Context): ApolloClient {
+        val sqlNormalizedCacheFactory = SqlNormalizedCacheFactory(context)
         val okHttpClient = OkHttpClient.Builder()
             .addInterceptor { chain ->
                 val githubToken = BuildConfig.GITHUB_TOKEN
@@ -25,7 +23,7 @@ object ApolloClientBuilder {
         return ApolloClient.Builder()
             .okHttpClient(okHttpClient)
             .serverUrl("https://api.github.com/graphql")
-            .normalizedCache(memoryCacheFactory)
+            .normalizedCache(sqlNormalizedCacheFactory)
             .build()
     }
 }

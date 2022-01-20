@@ -6,10 +6,9 @@ import com.tfandkusu.graphql.usecase.home.HomeOnCreateUseCase
 import com.tfandkusu.graphql.usecase.home.HomeReloadUseCase
 import com.tfandkusu.graphql.viewmodel.mockStateObserver
 import io.mockk.MockKAnnotations
+import io.mockk.coEvery
 import io.mockk.coVerifySequence
-import io.mockk.every
 import io.mockk.impl.annotations.MockK
-import io.mockk.verifySequence
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flow
@@ -58,14 +57,14 @@ class HomeViewModelTest {
     @Test
     fun onCreate() = testDispatcher.runBlockingTest {
         val issues = GitHubIssueCatalog.getList()
-        every {
+        coEvery {
             onCreateUseCase.execute()
         } returns flow {
             emit(issues)
         }
         val mockStateObserver = viewModel.state.mockStateObserver()
         viewModel.event(HomeEvent.OnCreate)
-        verifySequence {
+        coVerifySequence {
             mockStateObserver.onChanged(HomeState())
             onCreateUseCase.execute()
             mockStateObserver.onChanged(HomeState(issues = issues, progress = false))

@@ -11,6 +11,6 @@ class HomeReloadUseCaseImpl @Inject constructor(
     private val repository: GithubIssueRepository
 ) : HomeReloadUseCase {
     override suspend fun execute() {
-        repository.reload()
+        repository.fetch(true)
     }
 }
