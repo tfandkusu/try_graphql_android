@@ -109,11 +109,11 @@ class GithubIssueRepositoryTest {
     fun get() = runBlocking {
         val issue = GitHubIssueCatalog.getList().last()
         coEvery {
-            remoteDataStore.get(false, 1)
+            remoteDataStore.get(1)
         } returns issue
         repository.get(1) shouldBe issue
         coVerifySequence {
-            remoteDataStore.get(false, 1)
+            remoteDataStore.get(1)
         }
     }
 
@@ -125,7 +125,6 @@ class GithubIssueRepositoryTest {
         coVerifySequence {
             remoteDataStore.update(issue)
             remoteDataStore.fetch()
-            remoteDataStore.get(true, issue.number)
         }
     }
 }

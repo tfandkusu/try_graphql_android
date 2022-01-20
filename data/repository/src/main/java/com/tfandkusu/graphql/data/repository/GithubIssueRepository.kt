@@ -42,11 +42,10 @@ class GithubIssueRepositoryImpl @Inject constructor(
 
     override fun listAsFlow() = remoteDataStore.listAsFlow()
 
-    override suspend fun get(number: Int) = remoteDataStore.get(false, number)
+    override suspend fun get(number: Int) = remoteDataStore.get(number)
 
     override suspend fun update(issue: GithubIssue) {
         remoteDataStore.update(issue)
         remoteDataStore.fetch()
-        remoteDataStore.get(true, issue.number)
     }
 }

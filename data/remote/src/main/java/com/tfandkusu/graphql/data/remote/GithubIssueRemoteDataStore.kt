@@ -2,6 +2,7 @@ package com.tfandkusu.graphql.data.remote
 
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.cache.normalized.FetchPolicy
+import com.apollographql.apollo3.cache.normalized.doNotStore
 import com.apollographql.apollo3.cache.normalized.fetchPolicy
 import com.apollographql.apollo3.cache.normalized.watch
 import com.apollographql.apollo3.exception.ApolloException
@@ -22,7 +23,7 @@ interface GithubIssueRemoteDataStore {
 
     fun listAsFlow(): Flow<List<GithubIssue>>
 
-    suspend fun get(networkOnly: Boolean, number: Int): GithubIssue?
+    suspend fun get(number: Int): GithubIssue?
 
     suspend fun update(issue: GithubIssue)
 }
@@ -61,17 +62,13 @@ class GithubIssueRemoteDataStoreImpl @Inject constructor(
             }
     }
 
-    override suspend fun get(networkOnly: Boolean, number: Int): GithubIssue? {
+    override suspend fun get(number: Int): GithubIssue? {
         val ownerName = BuildConfig.OWNER_NAME
         val repositoryName = BuildConfig.REPOSITORY_NAME
         return apolloClient.query(GetIssueQuery(ownerName, repositoryName, number))
             .fetchPolicy(
-                if (networkOnly) {
-                    FetchPolicy.NetworkOnly
-                } else {
-                    FetchPolicy.CacheFirst
-                }
-            )
+                FetchPolicy.NetworkOnly
+            ).doNotStore(true)
             .execute().data?.let { data ->
                 data.repository?.issue?.let {
                     GithubIssue(it.id, it.number, it.title, it.closed)
@@ -85,7 +82,7 @@ class GithubIssueRemoteDataStoreImpl @Inject constructor(
                 issue.id,
                 issue.title,
             )
-        ).execute()
+        ).doNotStore(true).execute()
         apolloClient.mutation(
             UpdateIssueStateMutation(
                 issue.id,
@@ -95,6 +92,6 @@ class GithubIssueRemoteDataStoreImpl @Inject constructor(
                     IssueState.OPEN
                 },
             )
-        ).execute()
+        ).doNotStore(true).execute()
     }
 }
