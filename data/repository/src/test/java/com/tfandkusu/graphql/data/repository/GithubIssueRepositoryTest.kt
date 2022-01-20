@@ -1,10 +1,14 @@
 package com.tfandkusu.graphql.data.repository
 
 import com.tfandkusu.graphql.catalog.GitHubIssueCatalog
+import com.tfandkusu.graphql.data.local.CreatedLocalDataStore
+import com.tfandkusu.graphql.data.local.entity.LocalCreated
 import com.tfandkusu.graphql.data.remote.GithubIssueRemoteDataStore
+import com.tfandkusu.graphql.util.CurrentTimeGetter
 import io.kotlintest.shouldBe
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.coVerifySequence
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -22,37 +26,82 @@ class GithubIssueRepositoryTest {
     @MockK(relaxed = true)
     private lateinit var remoteDataStore: GithubIssueRemoteDataStore
 
+    @MockK(relaxed = true)
+    private lateinit var createdLocalDataStore: CreatedLocalDataStore
+
+    @MockK(relaxed = true)
+    private lateinit var currentTimeGetter: CurrentTimeGetter
+
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
-        repository = GithubIssueRepositoryImpl(remoteDataStore)
+        repository = GithubIssueRepositoryImpl(
+            remoteDataStore, createdLocalDataStore, currentTimeGetter
+        )
     }
 
     @Test
     fun listAsFlow() = runBlocking {
         val issues = GitHubIssueCatalog.getList()
         every {
-            remoteDataStore.listAsFlow(false)
+            remoteDataStore.listAsFlow()
         } returns flow {
             emit(issues)
         }
         repository.listAsFlow().first() shouldBe issues
         verifySequence {
-            remoteDataStore.listAsFlow(false)
+            remoteDataStore.listAsFlow()
         }
     }
 
     @Test
-    fun reload() = runBlocking {
-        val issues = GitHubIssueCatalog.getList()
+    fun fetchReload() = runBlocking {
+        val now = 24 * 60 * 60 * 1000L
         every {
-            remoteDataStore.listAsFlow(true)
-        } returns flow {
-            emit(issues)
+            currentTimeGetter.get()
+        } returns now
+        repository.fetch(true)
+        coVerifySequence {
+            currentTimeGetter.get()
+            remoteDataStore.fetch()
+            createdLocalDataStore.set(LocalCreated.KIND_GITHUB_ISSUE, now)
         }
-        repository.reload()
-        verifySequence {
-            remoteDataStore.listAsFlow(true)
+    }
+
+    @Test
+    fun fetchUseCache() = runBlocking {
+        val now = 24 * 60 * 60 * 1000L
+        coEvery {
+            createdLocalDataStore.get(LocalCreated.KIND_GITHUB_ISSUE)
+        } returns now - 10 * 60 * 1000
+        every {
+            currentTimeGetter.get()
+        } returns now
+        repository.fetch(false)
+        coVerifySequence {
+            currentTimeGetter.get()
+            createdLocalDataStore.get(LocalCreated.KIND_GITHUB_ISSUE)
+        }
+        coVerify(exactly = 0) {
+            remoteDataStore.fetch()
+        }
+    }
+
+    @Test
+    fun fetchCacheExpired() = runBlocking {
+        val now = 24 * 60 * 60 * 1000L
+        every {
+            currentTimeGetter.get()
+        } returns now
+        coEvery {
+            createdLocalDataStore.get(LocalCreated.KIND_GITHUB_ISSUE)
+        } returns now - 10 * 60 * 1000 - 1
+        repository.fetch(false)
+        coVerifySequence {
+            currentTimeGetter.get()
+            createdLocalDataStore.get(LocalCreated.KIND_GITHUB_ISSUE)
+            remoteDataStore.fetch()
+            createdLocalDataStore.set(LocalCreated.KIND_GITHUB_ISSUE, now)
         }
     }
 
@@ -60,11 +109,11 @@ class GithubIssueRepositoryTest {
     fun get() = runBlocking {
         val issue = GitHubIssueCatalog.getList().last()
         coEvery {
-            remoteDataStore.get(false, 1)
+            remoteDataStore.get(1)
         } returns issue
         repository.get(1) shouldBe issue
         coVerifySequence {
-            remoteDataStore.get(false, 1)
+            remoteDataStore.get(1)
         }
     }
 
@@ -72,16 +121,10 @@ class GithubIssueRepositoryTest {
     fun update() = runBlocking {
         val issues = GitHubIssueCatalog.getList()
         val issue = issues.last()
-        every {
-            remoteDataStore.listAsFlow(true)
-        } returns flow {
-            emit(issues)
-        }
         repository.update(issue)
         coVerifySequence {
             remoteDataStore.update(issue)
-            remoteDataStore.listAsFlow(true)
-            remoteDataStore.get(true, issue.number)
+            remoteDataStore.fetch()
         }
     }
 }

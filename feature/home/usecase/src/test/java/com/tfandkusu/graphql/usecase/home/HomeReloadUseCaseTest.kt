@@ -25,7 +25,7 @@ class HomeReloadUseCaseTest {
     fun execute() = runBlocking {
         useCase.execute()
         coVerifySequence {
-            repository.reload()
+            repository.fetch(true)
         }
     }
 }

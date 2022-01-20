@@ -4,9 +4,9 @@ import com.tfandkusu.graphql.catalog.GitHubIssueCatalog
 import com.tfandkusu.graphql.data.repository.GithubIssueRepository
 import io.kotlintest.shouldBe
 import io.mockk.MockKAnnotations
+import io.mockk.coVerifySequence
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
-import io.mockk.verifySequence
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
@@ -35,7 +35,8 @@ class HomeOnCreateUseCaseTest {
             emit(issues)
         }
         useCase.execute().first() shouldBe issues
-        verifySequence {
+        coVerifySequence {
+            repository.fetch(false)
             repository.listAsFlow()
         }
     }

@@ -1,7 +1,7 @@
 package com.tfandkusu.graphql.di
 
 import android.content.Context
-import com.tfandkusu.graphql.api.ApolloClientBuilder
+import com.tfandkusu.graphql.data.local.db.AppDatabaseBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -11,11 +11,11 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object ApiServiceModule {
+object AppDatabaseModule {
 
     @Provides
     @Singleton
-    fun providerApolloClient(
+    fun provideAppDatabase(
         @ApplicationContext context: Context
-    ) = ApolloClientBuilder.build(context)
+    ) = AppDatabaseBuilder.build(context, false)
 }

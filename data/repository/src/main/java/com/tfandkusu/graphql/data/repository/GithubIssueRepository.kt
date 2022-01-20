@@ -1,15 +1,18 @@
 package com.tfandkusu.graphql.data.repository
 
+import com.tfandkusu.graphql.data.local.CreatedLocalDataStore
+import com.tfandkusu.graphql.data.local.entity.LocalCreated
 import com.tfandkusu.graphql.data.remote.GithubIssueRemoteDataStore
 import com.tfandkusu.graphql.model.GithubIssue
+import com.tfandkusu.graphql.util.CurrentTimeGetter
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 
 interface GithubIssueRepository {
-    fun listAsFlow(): Flow<List<GithubIssue>>
 
-    suspend fun reload()
+    suspend fun fetch(reload: Boolean)
+
+    fun listAsFlow(): Flow<List<GithubIssue>>
 
     suspend fun get(number: Int): GithubIssue?
 
@@ -17,19 +20,32 @@ interface GithubIssueRepository {
 }
 
 class GithubIssueRepositoryImpl @Inject constructor(
-    private val remoteDataStore: GithubIssueRemoteDataStore
+    private val remoteDataStore: GithubIssueRemoteDataStore,
+    private val createdLocalDataStore: CreatedLocalDataStore,
+    private val currentTimeGetter: CurrentTimeGetter
 ) : GithubIssueRepository {
-    override fun listAsFlow() = remoteDataStore.listAsFlow(false)
 
-    override suspend fun reload() {
-        remoteDataStore.listAsFlow(true)
+    companion object {
+        private const val EXPIRE_TIME = 10 * 60 * 1000
     }
 
-    override suspend fun get(number: Int) = remoteDataStore.get(false, number)
+    override suspend fun fetch(reload: Boolean) {
+        val now = currentTimeGetter.get()
+        if (reload || createdLocalDataStore.get(
+                LocalCreated.KIND_GITHUB_ISSUE
+            ) + EXPIRE_TIME < now
+        ) {
+            remoteDataStore.fetch()
+            createdLocalDataStore.set(LocalCreated.KIND_GITHUB_ISSUE, now)
+        }
+    }
+
+    override fun listAsFlow() = remoteDataStore.listAsFlow()
+
+    override suspend fun get(number: Int) = remoteDataStore.get(number)
 
     override suspend fun update(issue: GithubIssue) {
         remoteDataStore.update(issue)
-        remoteDataStore.listAsFlow(true).first()
-        remoteDataStore.get(true, issue.number)
+        remoteDataStore.fetch()
     }
 }

@@ -33,7 +33,12 @@ preference = 'androidx.preference:preference-ktx:1.1.1'
 play-services-oss-licenses = 'com.google.android.gms:play-services-oss-licenses:17.0.0'
 # Apollo
 apollo-runtime = { module = 'com.apollographql.apollo3:apollo-runtime', version.ref = 'apollo' }
-apollo-normalized-cache = { module = 'com.apollographql.apollo3:apollo-normalized-cache', version.ref = 'apollo' }
+apollo-normalized-cache-memory = { module = 'com.apollographql.apollo3:apollo-normalized-cache', version.ref = 'apollo' }
+apollo-normalized-cache-sqlite = { module = 'com.apollographql.apollo3:apollo-normalized-cache-sqlite', version.ref = 'apollo' }
+# Room
+room-runtime = { module = 'androidx.room:room-runtime', version.ref = 'room' }
+room-ktx = { module = 'androidx.room:room-ktx', version.ref = 'room' }
+room-compiler = { module = 'androidx.room:room-compiler', version.ref = 'room' }
 # Lifecycle
 lifecycle-viewmodel-ktx = { module = 'androidx.lifecycle:lifecycle-viewmodel-ktx', version.ref = 'lifecycle' }
 lifecycle-viewmodel-compose = { module = 'androidx.lifecycle:lifecycle-viewmodel-compose', version.ref = 'lifecycle' }
