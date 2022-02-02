@@ -81,7 +81,11 @@ fun EditScreen(viewModel: EditViewModel, number: Int, backToHome: () -> Unit) {
             )
         }
     ) {
-        if (errorState.noError()) {
+        if (errorState.hasErrorOnScreen()) {
+            ApiError(errorState) {
+                viewModel.event(EditEvent.Load(number))
+            }
+        } else {
             if (state.progress) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
@@ -137,10 +141,6 @@ fun EditScreen(viewModel: EditViewModel, number: Int, backToHome: () -> Unit) {
                     }
                     Spacer(modifier = Modifier.height(16.dp))
                 }
-            }
-        } else {
-            ApiError(errorState) {
-                viewModel.event(EditEvent.Load(number))
             }
         }
     }

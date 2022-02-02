@@ -24,9 +24,9 @@ class ApiErrorViewModelHelperTest {
     }
 
     @Test
-    fun catchNetworkError() {
+    fun catchNetworkErrorOnScreen() {
         val mockStateObserver = helper.state.mockStateObserver()
-        helper.catch(NetworkErrorException())
+        helper.catch(NetworkErrorException(), dialogOrScreen = false)
         verifySequence {
             mockStateObserver.onChanged(ApiErrorState())
             mockStateObserver.onChanged(ApiErrorState(network = true))
@@ -34,9 +34,19 @@ class ApiErrorViewModelHelperTest {
     }
 
     @Test
+    fun catchNetworkErrorOnDialog() {
+        val mockStateObserver = helper.state.mockStateObserver()
+        helper.catch(NetworkErrorException(), dialogOrScreen = true)
+        verifySequence {
+            mockStateObserver.onChanged(ApiErrorState())
+            mockStateObserver.onChanged(ApiErrorState(network = true, dialogOrScreen = true))
+        }
+    }
+
+    @Test
     fun catchServerError() {
         val mockStateObserver = helper.state.mockStateObserver()
-        helper.catch(ServerErrorException(503, "Service Unavailable"))
+        helper.catch(ServerErrorException(503, "Service Unavailable"), dialogOrScreen = false)
         verifySequence {
             mockStateObserver.onChanged(ApiErrorState())
             mockStateObserver.onChanged(
@@ -53,7 +63,7 @@ class ApiErrorViewModelHelperTest {
     @Test
     fun catchUnknownError() {
         val mockStateObserver = helper.state.mockStateObserver()
-        helper.catch(UnknownErrorException())
+        helper.catch(UnknownErrorException(), dialogOrScreen = false)
         verifySequence {
             mockStateObserver.onChanged(ApiErrorState())
             mockStateObserver.onChanged(ApiErrorState(unknown = true))

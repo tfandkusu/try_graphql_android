@@ -72,7 +72,11 @@ fun HomeScreen(
             )
         }
     ) {
-        if (errorState.noError()) {
+        if (errorState.hasErrorOnScreen()) {
+            ApiError(errorState) {
+                viewModel.event(HomeEvent.Load)
+            }
+        } else {
             if (state.progress) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
@@ -97,10 +101,6 @@ fun HomeScreen(
                         }
                     }
                 }
-            }
-        } else {
-            ApiError(errorState) {
-                viewModel.event(HomeEvent.Load)
             }
         }
     }

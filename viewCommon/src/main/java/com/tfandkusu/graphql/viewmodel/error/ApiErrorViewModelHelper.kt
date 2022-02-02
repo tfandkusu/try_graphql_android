@@ -14,10 +14,19 @@ data class ApiServerError(
 data class ApiErrorState(
     val network: Boolean = false,
     val server: ApiServerError? = null,
-    val unknown: Boolean = false
+    val unknown: Boolean = false,
+    val dialogOrScreen: Boolean = false
 ) {
-    fun noError(): Boolean {
-        return !network && server == null && !unknown
+    private fun hasError(): Boolean {
+        return network || server != null || unknown
+    }
+
+    fun hasErrorOnScreen(): Boolean {
+        return hasError() && !dialogOrScreen
+    }
+
+    fun hasErrorOnDialog(): Boolean {
+        return hasError() && dialogOrScreen
     }
 }
 
@@ -27,21 +36,24 @@ class ApiErrorViewModelHelper {
 
     val state: LiveData<ApiErrorState> = _state
 
-    fun catch(e: Throwable) {
+    fun catch(e: Throwable, dialogOrScreen: Boolean) {
         when (e) {
             is NetworkErrorException -> {
                 _state.update {
-                    copy(network = true)
+                    copy(network = true, dialogOrScreen = dialogOrScreen)
                 }
             }
             is ServerErrorException -> {
                 _state.update {
-                    copy(server = ApiServerError(e.code, e.httpMessage))
+                    copy(
+                        server = ApiServerError(e.code, e.httpMessage),
+                        dialogOrScreen = dialogOrScreen
+                    )
                 }
             }
             else -> {
                 _state.update {
-                    copy(unknown = true)
+                    copy(unknown = true, dialogOrScreen = dialogOrScreen)
                 }
             }
         }

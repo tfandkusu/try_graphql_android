@@ -50,7 +50,7 @@ class HomeViewModelImpl @Inject constructor(
                     try {
                         loadUseCase.execute()
                     } catch (e: Throwable) {
-                        error.catch(e)
+                        error.catch(e, false)
                     }
                 }
                 HomeEvent.Reload -> {
@@ -60,7 +60,7 @@ class HomeViewModelImpl @Inject constructor(
                         }
                         reloadUseCase.execute()
                     } catch (e: Throwable) {
-                        error.catch(e)
+                        error.catch(e, false)
                     } finally {
                         _state.update {
                             copy(refresh = false)

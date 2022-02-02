@@ -63,7 +63,7 @@ class EditViewModelImpl @Inject constructor(
                             loaded = true
                         }
                     } catch (e: Throwable) {
-                        error.catch(e)
+                        error.catch(e, false)
                         _state.update {
                             copy(
                                 progress = false
@@ -86,7 +86,7 @@ class EditViewModelImpl @Inject constructor(
                         )
                         effectChannel.send(EditEffect.BackToHome)
                     } catch (t: Throwable) {
-                        error.catch(t)
+                        error.catch(t, true)
                         _state.update {
                             copy(progress = false)
                         }

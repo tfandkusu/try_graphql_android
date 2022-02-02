@@ -171,7 +171,7 @@ class EditViewModelTest {
             mockErrorStateObserver.onChanged(ApiErrorState())
             mockStateObserver.onChanged(EditState(progress = true))
             submitUseCase.execute(issue)
-            mockErrorStateObserver.onChanged(ApiErrorState(network = true))
+            mockErrorStateObserver.onChanged(ApiErrorState(network = true, dialogOrScreen = true))
             mockStateObserver.onChanged(EditState(progress = false))
         }
     }
