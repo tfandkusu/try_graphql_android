@@ -11,17 +11,17 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
 
-class EditOnCreateUseCaseTest {
+class EditLoadUseCaseTest {
 
     @MockK(relaxed = true)
     private lateinit var repository: GithubIssueRepository
 
-    private lateinit var useCase: EditOnCreateUseCase
+    private lateinit var useCase: EditLoadUseCase
 
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
-        useCase = EditOnCreateUseCaseImpl(repository)
+        useCase = EditLoadUseCaseImpl(repository)
     }
 
     @Test

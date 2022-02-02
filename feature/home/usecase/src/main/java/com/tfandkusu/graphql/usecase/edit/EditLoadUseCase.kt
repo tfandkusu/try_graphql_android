@@ -4,12 +4,12 @@ import com.tfandkusu.graphql.data.repository.GithubIssueRepository
 import com.tfandkusu.graphql.model.GithubIssue
 import javax.inject.Inject
 
-interface EditOnCreateUseCase {
+interface EditLoadUseCase {
     suspend fun execute(number: Int): GithubIssue?
 }
 
-class EditOnCreateUseCaseImpl @Inject constructor(
+class EditLoadUseCaseImpl @Inject constructor(
     private val repository: GithubIssueRepository
-) : EditOnCreateUseCase {
+) : EditLoadUseCase {
     override suspend fun execute(number: Int) = repository.get(number)
 }

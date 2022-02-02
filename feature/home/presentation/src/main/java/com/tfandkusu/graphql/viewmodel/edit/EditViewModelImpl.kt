@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tfandkusu.graphql.model.GithubIssue
-import com.tfandkusu.graphql.usecase.edit.EditOnCreateUseCase
+import com.tfandkusu.graphql.usecase.edit.EditLoadUseCase
 import com.tfandkusu.graphql.usecase.edit.EditSubmitUseCase
 import com.tfandkusu.graphql.viewmodel.error.ApiErrorViewModelHelper
 import com.tfandkusu.graphql.viewmodel.update
@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class EditViewModelImpl @Inject constructor(
-    private val onCreateUseCase: EditOnCreateUseCase,
+    private val loadUseCase: EditLoadUseCase,
     private val submitUseCase: EditSubmitUseCase
 ) : EditViewModel, ViewModel() {
     override fun createDefaultState() = EditState()
@@ -33,30 +33,41 @@ class EditViewModelImpl @Inject constructor(
 
     override val error = ApiErrorViewModelHelper()
 
-    private var firstOnCreate = true
+    private var loaded = false
 
     override fun event(event: EditEvent) {
         viewModelScope.launch {
             when (event) {
-                is EditEvent.OnCreate -> {
-                    if (firstOnCreate) {
-                        firstOnCreate = false
-                        try {
-                            val issue = onCreateUseCase.execute(event.number)
-                            issue?.let {
-                                _state.update {
-                                    copy(
-                                        progress = false,
-                                        id = it.id,
-                                        number = it.number,
-                                        title = it.title,
-                                        closed = it.closed,
-                                        submitEnabled = it.title.isNotEmpty()
-                                    )
-                                }
+                is EditEvent.Load -> {
+                    if (loaded)
+                        return@launch
+                    _state.update {
+                        copy(
+                            progress = true
+                        )
+                    }
+                    error.release()
+                    try {
+                        val issue = loadUseCase.execute(event.number)
+                        issue?.let {
+                            _state.update {
+                                copy(
+                                    progress = false,
+                                    id = it.id,
+                                    number = it.number,
+                                    title = it.title,
+                                    closed = it.closed,
+                                    submitEnabled = it.title.isNotEmpty()
+                                )
                             }
-                        } catch (e: Throwable) {
-                            error.catch(e)
+                            loaded = true
+                        }
+                    } catch (e: Throwable) {
+                        error.catch(e)
+                        _state.update {
+                            copy(
+                                progress = false
+                            )
                         }
                     }
                 }
