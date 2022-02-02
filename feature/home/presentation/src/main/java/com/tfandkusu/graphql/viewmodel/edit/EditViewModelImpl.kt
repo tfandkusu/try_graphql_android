@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.tfandkusu.graphql.model.GithubIssue
 import com.tfandkusu.graphql.usecase.edit.EditOnCreateUseCase
 import com.tfandkusu.graphql.usecase.edit.EditSubmitUseCase
+import com.tfandkusu.graphql.viewmodel.error.ApiErrorViewModelHelper
 import com.tfandkusu.graphql.viewmodel.update
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -30,6 +31,8 @@ class EditViewModelImpl @Inject constructor(
 
     override val effect: Flow<EditEffect> = effectChannel.receiveAsFlow()
 
+    override val error = ApiErrorViewModelHelper()
+
     private var firstOnCreate = true
 
     override fun event(event: EditEvent) {
@@ -38,18 +41,22 @@ class EditViewModelImpl @Inject constructor(
                 is EditEvent.OnCreate -> {
                     if (firstOnCreate) {
                         firstOnCreate = false
-                        val issue = onCreateUseCase.execute(event.number)
-                        issue?.let {
-                            _state.update {
-                                copy(
-                                    progress = false,
-                                    id = it.id,
-                                    number = it.number,
-                                    title = it.title,
-                                    closed = it.closed,
-                                    submitEnabled = it.title.isNotEmpty()
-                                )
+                        try {
+                            val issue = onCreateUseCase.execute(event.number)
+                            issue?.let {
+                                _state.update {
+                                    copy(
+                                        progress = false,
+                                        id = it.id,
+                                        number = it.number,
+                                        title = it.title,
+                                        closed = it.closed,
+                                        submitEnabled = it.title.isNotEmpty()
+                                    )
+                                }
                             }
+                        } catch (e: Throwable) {
+                            error.catch(e)
                         }
                     }
                 }
@@ -57,15 +64,22 @@ class EditViewModelImpl @Inject constructor(
                     _state.update {
                         copy(progress = true)
                     }
-                    submitUseCase.execute(
-                        GithubIssue(
-                            event.id,
-                            event.number,
-                            event.title,
-                            event.closed
+                    try {
+                        submitUseCase.execute(
+                            GithubIssue(
+                                event.id,
+                                event.number,
+                                event.title,
+                                event.closed
+                            )
                         )
-                    )
-                    effectChannel.send(EditEffect.BackToHome)
+                        effectChannel.send(EditEffect.BackToHome)
+                    } catch (t: Throwable) {
+                        error.catch(t)
+                        _state.update {
+                            copy(progress = false)
+                        }
+                    }
                 }
                 is EditEvent.UpdateTitle -> {
                     _state.update {

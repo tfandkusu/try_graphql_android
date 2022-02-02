@@ -29,6 +29,7 @@ import com.tfandkusu.graphql.compose.home.listitem.GitHubIssueListItem
 import com.tfandkusu.graphql.home.compose.R
 import com.tfandkusu.graphql.ui.theme.AppTemplateTheme
 import com.tfandkusu.graphql.view.info.InfoActivityAlias
+import com.tfandkusu.graphql.viewmodel.error.ApiErrorViewModelHelper
 import com.tfandkusu.graphql.viewmodel.home.HomeEffect
 import com.tfandkusu.graphql.viewmodel.home.HomeEvent
 import com.tfandkusu.graphql.viewmodel.home.HomeState
@@ -96,6 +97,9 @@ fun HomeScreen(
 }
 
 class HomeViewModelPreview(private val previewState: HomeState) : HomeViewModel {
+    override val error: ApiErrorViewModelHelper
+        get() = ApiErrorViewModelHelper()
+
     override fun createDefaultState() = previewState
 
     override val state: LiveData<HomeState>

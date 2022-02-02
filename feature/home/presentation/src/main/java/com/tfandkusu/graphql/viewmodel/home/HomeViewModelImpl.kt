@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tfandkusu.graphql.usecase.home.HomeOnCreateUseCase
 import com.tfandkusu.graphql.usecase.home.HomeReloadUseCase
+import com.tfandkusu.graphql.viewmodel.error.ApiErrorViewModelHelper
 import com.tfandkusu.graphql.viewmodel.update
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -30,23 +31,34 @@ class HomeViewModelImpl @Inject constructor(
 
     override val effect: Flow<HomeEffect> = effectChannel.receiveAsFlow()
 
+    override val error = ApiErrorViewModelHelper()
+
     override fun event(event: HomeEvent) {
         viewModelScope.launch {
             when (event) {
                 HomeEvent.OnCreate -> {
-                    onCreateUseCase.execute().collect { issues ->
-                        _state.update {
-                            copy(issues = issues, progress = false)
+                    try {
+                        onCreateUseCase.execute().collect { issues ->
+                            _state.update {
+                                copy(issues = issues, progress = false)
+                            }
                         }
+                    } catch (e: Throwable) {
+                        error.catch(e)
                     }
                 }
                 HomeEvent.Reload -> {
-                    _state.update {
-                        copy(refresh = true)
-                    }
-                    reloadUseCase.execute()
-                    _state.update {
-                        copy(refresh = false)
+                    try {
+                        _state.update {
+                            copy(refresh = true)
+                        }
+                        reloadUseCase.execute()
+                    } catch (e: Throwable) {
+                        error.catch(e)
+                    } finally {
+                        _state.update {
+                            copy(refresh = false)
+                        }
                     }
                 }
             }

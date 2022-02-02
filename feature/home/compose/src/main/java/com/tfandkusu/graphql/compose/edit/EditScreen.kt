@@ -38,6 +38,7 @@ import com.tfandkusu.graphql.viewmodel.edit.EditEffect
 import com.tfandkusu.graphql.viewmodel.edit.EditEvent
 import com.tfandkusu.graphql.viewmodel.edit.EditState
 import com.tfandkusu.graphql.viewmodel.edit.EditViewModel
+import com.tfandkusu.graphql.viewmodel.error.ApiErrorViewModelHelper
 import com.tfandkusu.graphql.viewmodel.useState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
@@ -157,6 +158,9 @@ fun EditScreenPreview() {
 }
 
 class EditViewModelPreview(private val previewState: EditState) : EditViewModel {
+    override val error: ApiErrorViewModelHelper
+        get() = ApiErrorViewModelHelper()
+
     override fun createDefaultState() = previewState
 
     override val state: LiveData<EditState>
