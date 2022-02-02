@@ -28,8 +28,10 @@ import com.tfandkusu.graphql.compose.TemplateTopAppBar
 import com.tfandkusu.graphql.compose.home.listitem.GitHubIssueListItem
 import com.tfandkusu.graphql.home.compose.R
 import com.tfandkusu.graphql.ui.theme.AppTemplateTheme
+import com.tfandkusu.graphql.view.error.ApiError
 import com.tfandkusu.graphql.view.info.InfoActivityAlias
 import com.tfandkusu.graphql.viewmodel.error.ApiErrorViewModelHelper
+import com.tfandkusu.graphql.viewmodel.error.useErrorState
 import com.tfandkusu.graphql.viewmodel.home.HomeEffect
 import com.tfandkusu.graphql.viewmodel.home.HomeEvent
 import com.tfandkusu.graphql.viewmodel.home.HomeState
@@ -44,10 +46,12 @@ fun HomeScreen(
     editIssue: (number: Int) -> Unit
 ) {
     LaunchedEffect(Unit) {
+        viewModel.event(HomeEvent.Load)
         viewModel.event(HomeEvent.OnCreate)
     }
     val context = LocalContext.current
     val state = useState(viewModel)
+    val errorState = useErrorState(viewModel.error)
     Scaffold(
         topBar = {
             TemplateTopAppBar(
@@ -68,29 +72,35 @@ fun HomeScreen(
             )
         }
     ) {
-        if (state.progress) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
-        } else {
-            SwipeRefresh(
-                state = rememberSwipeRefreshState(state.refresh),
-                onRefresh = {
-                    viewModel.event(HomeEvent.Reload)
+        if (errorState.noError()) {
+            if (state.progress) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
                 }
-            ) {
-                LazyColumn {
-                    state.issues.map {
-                        item(key = it.id) {
-                            GitHubIssueListItem(it) { number ->
-                                editIssue(number)
+            } else {
+                SwipeRefresh(
+                    state = rememberSwipeRefreshState(state.refresh),
+                    onRefresh = {
+                        viewModel.event(HomeEvent.Reload)
+                    }
+                ) {
+                    LazyColumn {
+                        state.issues.map {
+                            item(key = it.id) {
+                                GitHubIssueListItem(it) { number ->
+                                    editIssue(number)
+                                }
                             }
                         }
                     }
                 }
+            }
+        } else {
+            ApiError(errorState) {
+                viewModel.event(HomeEvent.Load)
             }
         }
     }

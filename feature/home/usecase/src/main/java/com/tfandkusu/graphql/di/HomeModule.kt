@@ -4,6 +4,8 @@ import com.tfandkusu.graphql.usecase.edit.EditOnCreateUseCase
 import com.tfandkusu.graphql.usecase.edit.EditOnCreateUseCaseImpl
 import com.tfandkusu.graphql.usecase.edit.EditSubmitUseCase
 import com.tfandkusu.graphql.usecase.edit.EditSubmitUseCaseImpl
+import com.tfandkusu.graphql.usecase.home.HomeLoadUseCase
+import com.tfandkusu.graphql.usecase.home.HomeLoadUseCaseImpl
 import com.tfandkusu.graphql.usecase.home.HomeOnCreateUseCase
 import com.tfandkusu.graphql.usecase.home.HomeOnCreateUseCaseImpl
 import com.tfandkusu.graphql.usecase.home.HomeReloadUseCase
@@ -22,6 +24,12 @@ abstract class HomeModule {
     abstract fun bindHomeOnCreateUseCase(
         useCase: HomeOnCreateUseCaseImpl
     ): HomeOnCreateUseCase
+
+    @Binds
+    @Singleton
+    abstract fun bindHomeLoadUseCase(
+        useCase: HomeLoadUseCaseImpl
+    ): HomeLoadUseCase
 
     @Binds
     @Singleton

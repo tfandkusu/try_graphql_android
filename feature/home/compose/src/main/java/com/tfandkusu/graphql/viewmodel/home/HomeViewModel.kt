@@ -5,6 +5,7 @@ import com.tfandkusu.graphql.viewmodel.UnidirectionalViewModel
 import com.tfandkusu.graphql.viewmodel.error.ApiErrorViewModelHelper
 
 sealed class HomeEvent {
+    object Load : HomeEvent()
     object OnCreate : HomeEvent()
     object Reload : HomeEvent()
 }

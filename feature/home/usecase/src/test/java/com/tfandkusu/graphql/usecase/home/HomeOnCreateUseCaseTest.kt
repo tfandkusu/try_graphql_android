@@ -36,7 +36,6 @@ class HomeOnCreateUseCaseTest {
         }
         useCase.execute().first() shouldBe issues
         coVerifySequence {
-            repository.fetch(false)
             repository.listAsFlow()
         }
     }

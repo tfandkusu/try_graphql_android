@@ -13,7 +13,6 @@ class HomeOnCreateUseCaseImpl @Inject constructor(
     private val repository: GithubIssueRepository
 ) : HomeOnCreateUseCase {
     override suspend fun execute(): Flow<List<GithubIssue>> {
-        repository.fetch(false)
         return repository.listAsFlow()
     }
 }

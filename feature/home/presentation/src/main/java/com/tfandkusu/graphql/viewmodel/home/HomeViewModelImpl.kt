@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.tfandkusu.graphql.usecase.home.HomeLoadUseCase
 import com.tfandkusu.graphql.usecase.home.HomeOnCreateUseCase
 import com.tfandkusu.graphql.usecase.home.HomeReloadUseCase
 import com.tfandkusu.graphql.viewmodel.error.ApiErrorViewModelHelper
@@ -18,6 +19,7 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class HomeViewModelImpl @Inject constructor(
     private val onCreateUseCase: HomeOnCreateUseCase,
+    private val loadUseCase: HomeLoadUseCase,
     private val reloadUseCase: HomeReloadUseCase
 ) : HomeViewModel, ViewModel() {
 
@@ -37,12 +39,16 @@ class HomeViewModelImpl @Inject constructor(
         viewModelScope.launch {
             when (event) {
                 HomeEvent.OnCreate -> {
-                    try {
-                        onCreateUseCase.execute().collect { issues ->
-                            _state.update {
-                                copy(issues = issues, progress = false)
-                            }
+                    onCreateUseCase.execute().collect { issues ->
+                        _state.update {
+                            copy(issues = issues, progress = false)
                         }
+                    }
+                }
+                HomeEvent.Load -> {
+                    error.release()
+                    try {
+                        loadUseCase.execute()
                     } catch (e: Throwable) {
                         error.catch(e)
                     }
