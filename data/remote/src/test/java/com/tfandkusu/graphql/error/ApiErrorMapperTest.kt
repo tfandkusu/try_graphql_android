@@ -1,5 +1,6 @@
 package com.tfandkusu.graphql.error
 
+import com.apollographql.apollo3.exception.ApolloHttpException
 import com.apollographql.apollo3.exception.ApolloNetworkException
 import com.apollographql.apollo3.exception.JsonEncodingException
 import io.kotlintest.matchers.types.shouldBeTypeOf
@@ -12,6 +13,13 @@ class ApiErrorMapperTest {
     @Test
     fun network() {
         errorHelper.mapError(ApolloNetworkException()).shouldBeTypeOf<NetworkErrorException>()
+    }
+
+    @Test
+    fun serverError() {
+        errorHelper.mapError(
+            ApolloHttpException(500, listOf(), null, "Internal Server Error", null)
+        ).shouldBeTypeOf<ServerErrorException>()
     }
 
     @Test
