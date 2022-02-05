@@ -5,8 +5,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tfandkusu.graphql.model.GithubIssue
-import com.tfandkusu.graphql.usecase.edit.EditOnCreateUseCase
+import com.tfandkusu.graphql.usecase.edit.EditLoadUseCase
 import com.tfandkusu.graphql.usecase.edit.EditSubmitUseCase
+import com.tfandkusu.graphql.viewmodel.error.ApiErrorShowKind
+import com.tfandkusu.graphql.viewmodel.error.ApiErrorViewModelHelper
 import com.tfandkusu.graphql.viewmodel.update
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -16,12 +18,12 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class EditViewModelImpl @Inject constructor(
-    private val onCreateUseCase: EditOnCreateUseCase,
+    private val loadUseCase: EditLoadUseCase,
     private val submitUseCase: EditSubmitUseCase
 ) : EditViewModel, ViewModel() {
     override fun createDefaultState() = EditState()
 
-    private val _state = MutableLiveData(EditState())
+    private val _state = MutableLiveData(createDefaultState())
 
     override val state: LiveData<EditState>
         get() = _state
@@ -30,15 +32,24 @@ class EditViewModelImpl @Inject constructor(
 
     override val effect: Flow<EditEffect> = effectChannel.receiveAsFlow()
 
-    private var firstOnCreate = true
+    override val error = ApiErrorViewModelHelper()
+
+    private var loaded = false
 
     override fun event(event: EditEvent) {
         viewModelScope.launch {
             when (event) {
-                is EditEvent.OnCreate -> {
-                    if (firstOnCreate) {
-                        firstOnCreate = false
-                        val issue = onCreateUseCase.execute(event.number)
+                is EditEvent.Load -> {
+                    if (loaded)
+                        return@launch
+                    _state.update {
+                        copy(
+                            progress = true
+                        )
+                    }
+                    error.release()
+                    try {
+                        val issue = loadUseCase.execute(event.number)
                         issue?.let {
                             _state.update {
                                 copy(
@@ -50,6 +61,14 @@ class EditViewModelImpl @Inject constructor(
                                     submitEnabled = it.title.isNotEmpty()
                                 )
                             }
+                            loaded = true
+                        }
+                    } catch (e: Throwable) {
+                        error.catch(e, ApiErrorShowKind.SCREEN)
+                        _state.update {
+                            copy(
+                                progress = false
+                            )
                         }
                     }
                 }
@@ -57,15 +76,22 @@ class EditViewModelImpl @Inject constructor(
                     _state.update {
                         copy(progress = true)
                     }
-                    submitUseCase.execute(
-                        GithubIssue(
-                            event.id,
-                            event.number,
-                            event.title,
-                            event.closed
+                    try {
+                        submitUseCase.execute(
+                            GithubIssue(
+                                event.id,
+                                event.number,
+                                event.title,
+                                event.closed
+                            )
                         )
-                    )
-                    effectChannel.send(EditEffect.BackToHome)
+                        effectChannel.send(EditEffect.BackToHome)
+                    } catch (t: Throwable) {
+                        error.catch(t, ApiErrorShowKind.DIALOG)
+                        _state.update {
+                            copy(progress = false)
+                        }
+                    }
                 }
                 is EditEvent.UpdateTitle -> {
                     _state.update {

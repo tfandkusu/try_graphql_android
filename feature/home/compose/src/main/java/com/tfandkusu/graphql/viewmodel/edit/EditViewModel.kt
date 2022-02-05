@@ -1,9 +1,10 @@
 package com.tfandkusu.graphql.viewmodel.edit
 
 import com.tfandkusu.graphql.viewmodel.UnidirectionalViewModel
+import com.tfandkusu.graphql.viewmodel.error.ApiErrorViewModelHelper
 
 sealed class EditEvent {
-    data class OnCreate(val number: Int) : EditEvent()
+    data class Load(val number: Int) : EditEvent()
     data class UpdateTitle(val title: String) : EditEvent()
     data class UpdateClosed(val closed: Boolean) : EditEvent()
     data class Submit(
@@ -27,4 +28,6 @@ data class EditState(
     val submitEnabled: Boolean = false
 )
 
-interface EditViewModel : UnidirectionalViewModel<EditEvent, EditEffect, EditState>
+interface EditViewModel : UnidirectionalViewModel<EditEvent, EditEffect, EditState> {
+    val error: ApiErrorViewModelHelper
+}

@@ -24,19 +24,39 @@ class ApiErrorViewModelHelperTest {
     }
 
     @Test
-    fun catchNetworkError() {
+    fun catchNetworkErrorOnScreen() {
         val mockStateObserver = helper.state.mockStateObserver()
-        helper.catch(NetworkErrorException())
+        helper.catch(NetworkErrorException(), ApiErrorShowKind.SCREEN)
         verifySequence {
             mockStateObserver.onChanged(ApiErrorState())
-            mockStateObserver.onChanged(ApiErrorState(network = true))
+            mockStateObserver.onChanged(
+                ApiErrorState(
+                    network = true,
+                    showKind = ApiErrorShowKind.SCREEN
+                )
+            )
+        }
+    }
+
+    @Test
+    fun catchNetworkErrorOnDialog() {
+        val mockStateObserver = helper.state.mockStateObserver()
+        helper.catch(NetworkErrorException(), ApiErrorShowKind.DIALOG)
+        verifySequence {
+            mockStateObserver.onChanged(ApiErrorState())
+            mockStateObserver.onChanged(
+                ApiErrorState(
+                    network = true,
+                    showKind = ApiErrorShowKind.DIALOG
+                )
+            )
         }
     }
 
     @Test
     fun catchServerError() {
         val mockStateObserver = helper.state.mockStateObserver()
-        helper.catch(ServerErrorException(503, "Service Unavailable"))
+        helper.catch(ServerErrorException(503, "Service Unavailable"), ApiErrorShowKind.SCREEN)
         verifySequence {
             mockStateObserver.onChanged(ApiErrorState())
             mockStateObserver.onChanged(
@@ -44,7 +64,8 @@ class ApiErrorViewModelHelperTest {
                     server = ApiServerError(
                         503,
                         "Service Unavailable"
-                    )
+                    ),
+                    showKind = ApiErrorShowKind.SCREEN
                 )
             )
         }
@@ -53,10 +74,15 @@ class ApiErrorViewModelHelperTest {
     @Test
     fun catchUnknownError() {
         val mockStateObserver = helper.state.mockStateObserver()
-        helper.catch(UnknownErrorException())
+        helper.catch(UnknownErrorException(), ApiErrorShowKind.SCREEN)
         verifySequence {
             mockStateObserver.onChanged(ApiErrorState())
-            mockStateObserver.onChanged(ApiErrorState(unknown = true))
+            mockStateObserver.onChanged(
+                ApiErrorState(
+                    unknown = true,
+                    showKind = ApiErrorShowKind.SCREEN
+                )
+            )
         }
     }
 

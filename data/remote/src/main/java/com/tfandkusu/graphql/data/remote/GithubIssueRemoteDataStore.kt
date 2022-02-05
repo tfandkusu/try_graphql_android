@@ -11,11 +11,11 @@ import com.tfandkusu.graphql.api.ListIssuesQuery
 import com.tfandkusu.graphql.api.UpdateIssueStateMutation
 import com.tfandkusu.graphql.api.UpdateIssueTitleMutation
 import com.tfandkusu.graphql.api.type.IssueState
+import com.tfandkusu.graphql.error.ApiErrorMapper
 import com.tfandkusu.graphql.model.GithubIssue
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import timber.log.Timber
 
 interface GithubIssueRemoteDataStore {
 
@@ -32,13 +32,15 @@ class GithubIssueRemoteDataStoreImpl @Inject constructor(
     private val apolloClient: ApolloClient
 ) : GithubIssueRemoteDataStore {
 
+    private val errorHelper = ApiErrorMapper()
+
     override suspend fun fetch() {
         val repositoryName = BuildConfig.REPOSITORY_NAME
         val query = ListIssuesQuery(repositoryName)
         try {
             apolloClient.query(query).fetchPolicy(FetchPolicy.NetworkOnly).execute()
         } catch (e: ApolloException) {
-            Timber.d(e)
+            throw errorHelper.mapError(e)
         }
     }
 
@@ -65,33 +67,41 @@ class GithubIssueRemoteDataStoreImpl @Inject constructor(
     override suspend fun get(number: Int): GithubIssue? {
         val ownerName = BuildConfig.OWNER_NAME
         val repositoryName = BuildConfig.REPOSITORY_NAME
-        return apolloClient.query(GetIssueQuery(ownerName, repositoryName, number))
-            .fetchPolicy(
-                FetchPolicy.NetworkOnly
-            ).doNotStore(true)
-            .execute().data?.let { data ->
-                data.repository?.issue?.let {
-                    GithubIssue(it.id, it.number, it.title, it.closed)
+        try {
+            return apolloClient.query(GetIssueQuery(ownerName, repositoryName, number))
+                .fetchPolicy(
+                    FetchPolicy.NetworkOnly
+                ).doNotStore(true)
+                .execute().data?.let { data ->
+                    data.repository?.issue?.let {
+                        GithubIssue(it.id, it.number, it.title, it.closed)
+                    }
                 }
-            }
+        } catch (e: ApolloException) {
+            throw errorHelper.mapError(e)
+        }
     }
 
     override suspend fun update(issue: GithubIssue) {
-        apolloClient.mutation(
-            UpdateIssueTitleMutation(
-                issue.id,
-                issue.title,
-            )
-        ).doNotStore(true).execute()
-        apolloClient.mutation(
-            UpdateIssueStateMutation(
-                issue.id,
-                if (issue.closed) {
-                    IssueState.CLOSED
-                } else {
-                    IssueState.OPEN
-                },
-            )
-        ).doNotStore(true).execute()
+        try {
+            apolloClient.mutation(
+                UpdateIssueTitleMutation(
+                    issue.id,
+                    issue.title,
+                )
+            ).doNotStore(true).execute()
+            apolloClient.mutation(
+                UpdateIssueStateMutation(
+                    issue.id,
+                    if (issue.closed) {
+                        IssueState.CLOSED
+                    } else {
+                        IssueState.OPEN
+                    }
+                )
+            ).doNotStore(true).execute()
+        } catch (e: ApolloException) {
+            throw errorHelper.mapError(e)
+        }
     }
 }

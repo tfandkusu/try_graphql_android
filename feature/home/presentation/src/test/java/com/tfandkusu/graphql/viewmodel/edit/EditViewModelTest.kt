@@ -2,9 +2,12 @@ package com.tfandkusu.graphql.viewmodel.edit
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.tfandkusu.graphql.catalog.GitHubIssueCatalog
+import com.tfandkusu.graphql.error.NetworkErrorException
 import com.tfandkusu.graphql.model.GithubIssue
-import com.tfandkusu.graphql.usecase.edit.EditOnCreateUseCase
+import com.tfandkusu.graphql.usecase.edit.EditLoadUseCase
 import com.tfandkusu.graphql.usecase.edit.EditSubmitUseCase
+import com.tfandkusu.graphql.viewmodel.error.ApiErrorShowKind
+import com.tfandkusu.graphql.viewmodel.error.ApiErrorState
 import com.tfandkusu.graphql.viewmodel.mockStateObserver
 import io.kotlintest.shouldBe
 import io.mockk.MockKAnnotations
@@ -34,7 +37,7 @@ class EditViewModelTest {
     private val testDispatcher = TestCoroutineDispatcher()
 
     @MockK(relaxed = true)
-    private lateinit var onCreateUseCase: EditOnCreateUseCase
+    private lateinit var loadUseCase: EditLoadUseCase
 
     @MockK(relaxed = true)
     private lateinit var submitUseCase: EditSubmitUseCase
@@ -47,7 +50,7 @@ class EditViewModelTest {
         Dispatchers.setMain(testDispatcher)
         MockKAnnotations.init(this)
         viewModel = EditViewModelImpl(
-            onCreateUseCase,
+            loadUseCase,
             submitUseCase
         )
     }
@@ -61,18 +64,19 @@ class EditViewModelTest {
 
     @ExperimentalCoroutinesApi
     @Test
-    fun onCreate() = testDispatcher.runBlockingTest {
+    fun loadSuccess() = testDispatcher.runBlockingTest {
         val issue = GitHubIssueCatalog.getList().last()
         coEvery {
-            onCreateUseCase.execute(1)
+            loadUseCase.execute(1)
         } returns issue
         val mockStateObserver = viewModel.state.mockStateObserver()
-        viewModel.event(EditEvent.OnCreate(1))
+        viewModel.event(EditEvent.Load(1))
         // This process is executed only once.
-        viewModel.event(EditEvent.OnCreate(1))
+        viewModel.event(EditEvent.Load(1))
         coVerifySequence {
             mockStateObserver.onChanged(EditState())
-            onCreateUseCase.execute(1)
+            mockStateObserver.onChanged(EditState())
+            loadUseCase.execute(1)
             mockStateObserver.onChanged(
                 EditState(
                     false,
@@ -83,6 +87,31 @@ class EditViewModelTest {
                     true
                 )
             )
+        }
+    }
+
+    @ExperimentalCoroutinesApi
+    @Test
+    fun loadError() = testDispatcher.runBlockingTest {
+        coEvery {
+            loadUseCase.execute(1)
+        } throws NetworkErrorException()
+        val mockStateObserver = viewModel.state.mockStateObserver()
+        val mockErrorStateObserver = viewModel.error.state.mockStateObserver()
+        viewModel.event(EditEvent.Load(1))
+        coVerifySequence {
+            mockStateObserver.onChanged(EditState())
+            mockErrorStateObserver.onChanged(ApiErrorState())
+            mockStateObserver.onChanged(EditState())
+            mockErrorStateObserver.onChanged(ApiErrorState())
+            loadUseCase.execute(1)
+            mockErrorStateObserver.onChanged(
+                ApiErrorState(
+                    network = true,
+                    showKind = ApiErrorShowKind.SCREEN
+                )
+            )
+            mockStateObserver.onChanged(EditState(progress = false))
         }
     }
 
@@ -110,7 +139,7 @@ class EditViewModelTest {
 
     @ExperimentalCoroutinesApi
     @Test
-    fun submit() = testDispatcher.runBlockingTest {
+    fun submitSuccess() = testDispatcher.runBlockingTest {
         val mockStateObserver = viewModel.state.mockStateObserver()
         viewModel.event(EditEvent.Submit("id_1", 1, "Title 1", true))
         coVerifySequence {
@@ -126,5 +155,32 @@ class EditViewModelTest {
             )
         }
         viewModel.effect.first() shouldBe EditEffect.BackToHome
+    }
+
+    @ExperimentalCoroutinesApi
+    @Test
+    fun submitError() = testDispatcher.runBlockingTest {
+        val mockStateObserver = viewModel.state.mockStateObserver()
+        val mockErrorStateObserver = viewModel.error.state.mockStateObserver()
+        val issue = GithubIssue(
+            "id_1",
+            1,
+            "Title 1",
+            true
+        )
+        coEvery {
+            submitUseCase.execute(issue)
+        } throws NetworkErrorException()
+        viewModel.event(EditEvent.Submit("id_1", 1, "Title 1", true))
+        coVerifySequence {
+            mockStateObserver.onChanged(EditState())
+            mockErrorStateObserver.onChanged(ApiErrorState())
+            mockStateObserver.onChanged(EditState(progress = true))
+            submitUseCase.execute(issue)
+            mockErrorStateObserver.onChanged(
+                ApiErrorState(network = true, showKind = ApiErrorShowKind.DIALOG)
+            )
+            mockStateObserver.onChanged(EditState(progress = false))
+        }
     }
 }

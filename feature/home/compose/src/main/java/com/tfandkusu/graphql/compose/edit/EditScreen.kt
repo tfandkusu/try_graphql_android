@@ -34,10 +34,14 @@ import com.tfandkusu.graphql.catalog.GitHubIssueCatalog
 import com.tfandkusu.graphql.compose.TemplateTopAppBar
 import com.tfandkusu.graphql.home.compose.R
 import com.tfandkusu.graphql.ui.theme.AppTemplateTheme
+import com.tfandkusu.graphql.view.error.ApiErrorOnDialog
+import com.tfandkusu.graphql.view.error.ApiErrorOnScreen
 import com.tfandkusu.graphql.viewmodel.edit.EditEffect
 import com.tfandkusu.graphql.viewmodel.edit.EditEvent
 import com.tfandkusu.graphql.viewmodel.edit.EditState
 import com.tfandkusu.graphql.viewmodel.edit.EditViewModel
+import com.tfandkusu.graphql.viewmodel.error.ApiErrorViewModelHelper
+import com.tfandkusu.graphql.viewmodel.error.useErrorState
 import com.tfandkusu.graphql.viewmodel.useState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
@@ -45,11 +49,10 @@ import kotlinx.coroutines.flow.flow
 
 @Composable
 fun EditScreen(viewModel: EditViewModel, number: Int, backToHome: () -> Unit) {
-    LaunchedEffect(Unit) {
-        viewModel.event(EditEvent.OnCreate(number))
-    }
     val state = useState(viewModel)
+    val errorState = useErrorState(viewModel.error)
     LaunchedEffect(Unit) {
+        viewModel.event(EditEvent.Load(number))
         viewModel.effect.collect { effect ->
             when (effect) {
                 EditEffect.BackToHome -> {
@@ -79,63 +82,70 @@ fun EditScreen(viewModel: EditViewModel, number: Int, backToHome: () -> Unit) {
             )
         }
     ) {
-        if (state.progress) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
+        if (errorState.hasErrorOnScreen()) {
+            ApiErrorOnScreen(errorState) {
+                viewModel.event(EditEvent.Load(number))
             }
         } else {
-            Column(
-                modifier = Modifier.fillMaxSize()
-            ) {
-                TextField(
-                    modifier = Modifier.fillMaxWidth().padding(16.dp),
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(
-                        imeAction = ImeAction.Done
-                    ),
-                    value = state.title,
-                    onValueChange = { viewModel.event(EditEvent.UpdateTitle(it)) },
-                    label = { Text(stringResource(R.string.edit_label_title)) }
-                )
-                Row(
-                    modifier = Modifier.fillMaxWidth()
-                        .padding(horizontal = 16.dp)
+            if (state.progress) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        stringResource(R.string.edit_label_closed)
-                    )
-                    Spacer(modifier = Modifier.width(16.dp))
-                    Switch(
-                        checked = state.closed,
-                        onCheckedChange = {
-                            viewModel.event(EditEvent.UpdateClosed(it))
-                        },
-                    )
+                    CircularProgressIndicator()
                 }
-                Spacer(modifier = Modifier.height(16.dp))
-                Button(
-                    modifier = Modifier.align(Alignment.CenterHorizontally),
-                    onClick = {
-                        viewModel.event(
-                            EditEvent.Submit(
-                                state.id,
-                                state.number,
-                                state.title,
-                                state.closed
-                            )
+            } else {
+                Column(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    TextField(
+                        modifier = Modifier.fillMaxWidth().padding(16.dp),
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(
+                            imeAction = ImeAction.Done
+                        ),
+                        value = state.title,
+                        onValueChange = { viewModel.event(EditEvent.UpdateTitle(it)) },
+                        label = { Text(stringResource(R.string.edit_label_title)) }
+                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth()
+                            .padding(horizontal = 16.dp)
+                    ) {
+                        Text(
+                            stringResource(R.string.edit_label_closed)
                         )
-                    },
-                    enabled = state.submitEnabled
-                ) {
-                    Text(stringResource(R.string.edit_update))
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Switch(
+                            checked = state.closed,
+                            onCheckedChange = {
+                                viewModel.event(EditEvent.UpdateClosed(it))
+                            },
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Button(
+                        modifier = Modifier.align(Alignment.CenterHorizontally),
+                        onClick = {
+                            viewModel.event(
+                                EditEvent.Submit(
+                                    state.id,
+                                    state.number,
+                                    state.title,
+                                    state.closed
+                                )
+                            )
+                        },
+                        enabled = state.submitEnabled
+                    ) {
+                        Text(stringResource(R.string.edit_update))
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
                 }
-                Spacer(modifier = Modifier.height(16.dp))
             }
         }
     }
+    ApiErrorOnDialog(viewModel.error, errorState)
 }
 
 @Composable
@@ -157,6 +167,9 @@ fun EditScreenPreview() {
 }
 
 class EditViewModelPreview(private val previewState: EditState) : EditViewModel {
+    override val error: ApiErrorViewModelHelper
+        get() = ApiErrorViewModelHelper()
+
     override fun createDefaultState() = previewState
 
     override val state: LiveData<EditState>

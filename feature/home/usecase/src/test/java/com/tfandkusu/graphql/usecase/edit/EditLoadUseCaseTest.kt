@@ -1,42 +1,38 @@
-package com.tfandkusu.graphql.usecase.home
+package com.tfandkusu.graphql.usecase.edit
 
 import com.tfandkusu.graphql.catalog.GitHubIssueCatalog
 import com.tfandkusu.graphql.data.repository.GithubIssueRepository
 import io.kotlintest.shouldBe
 import io.mockk.MockKAnnotations
+import io.mockk.coEvery
 import io.mockk.coVerifySequence
-import io.mockk.every
 import io.mockk.impl.annotations.MockK
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
 
-class HomeOnCreateUseCaseTest {
+class EditLoadUseCaseTest {
 
     @MockK(relaxed = true)
     private lateinit var repository: GithubIssueRepository
 
-    private lateinit var useCase: HomeOnCreateUseCase
+    private lateinit var useCase: EditLoadUseCase
 
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
-        useCase = HomeOnCreateUseCaseImpl(repository)
+        useCase = EditLoadUseCaseImpl(repository)
     }
 
     @Test
     fun execute() = runBlocking {
-        val issues = GitHubIssueCatalog.getList()
-        every {
-            repository.listAsFlow()
-        } returns flow {
-            emit(issues)
-        }
-        useCase.execute().first() shouldBe issues
+        val issue = GitHubIssueCatalog.getList().last()
+        coEvery {
+            repository.get(1)
+        } returns issue
+        useCase.execute(1) shouldBe issue
         coVerifySequence {
-            repository.listAsFlow()
+            repository.get(1)
         }
     }
 }

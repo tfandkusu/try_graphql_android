@@ -2,8 +2,12 @@ package com.tfandkusu.graphql.viewmodel.home
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.tfandkusu.graphql.catalog.GitHubIssueCatalog
+import com.tfandkusu.graphql.error.NetworkErrorException
+import com.tfandkusu.graphql.usecase.home.HomeLoadUseCase
 import com.tfandkusu.graphql.usecase.home.HomeOnCreateUseCase
 import com.tfandkusu.graphql.usecase.home.HomeReloadUseCase
+import com.tfandkusu.graphql.viewmodel.error.ApiErrorShowKind
+import com.tfandkusu.graphql.viewmodel.error.ApiErrorState
 import com.tfandkusu.graphql.viewmodel.mockStateObserver
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
@@ -34,6 +38,9 @@ class HomeViewModelTest {
     private lateinit var onCreateUseCase: HomeOnCreateUseCase
 
     @MockK(relaxed = true)
+    private lateinit var loadUseCase: HomeLoadUseCase
+
+    @MockK(relaxed = true)
     private lateinit var reloadUseCase: HomeReloadUseCase
 
     private lateinit var viewModel: HomeViewModel
@@ -43,7 +50,7 @@ class HomeViewModelTest {
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
         MockKAnnotations.init(this)
-        viewModel = HomeViewModelImpl(onCreateUseCase, reloadUseCase)
+        viewModel = HomeViewModelImpl(onCreateUseCase, loadUseCase, reloadUseCase)
     }
 
     @ExperimentalCoroutinesApi
@@ -73,13 +80,70 @@ class HomeViewModelTest {
 
     @ExperimentalCoroutinesApi
     @Test
-    fun reload() = testDispatcher.runBlockingTest {
+    fun loadSuccess() = testDispatcher.runBlockingTest {
+        val mockErrorStateObserver = viewModel.error.state.mockStateObserver()
+        viewModel.event(HomeEvent.Load)
+        coVerifySequence {
+            mockErrorStateObserver.onChanged(ApiErrorState())
+            mockErrorStateObserver.onChanged(ApiErrorState())
+            loadUseCase.execute()
+        }
+    }
+
+    @ExperimentalCoroutinesApi
+    @Test
+    fun loadError() = testDispatcher.runBlockingTest {
+        coEvery {
+            loadUseCase.execute()
+        } throws NetworkErrorException()
+        val mockErrorStateObserver = viewModel.error.state.mockStateObserver()
+        viewModel.event(HomeEvent.Load)
+        coVerifySequence {
+            mockErrorStateObserver.onChanged(ApiErrorState())
+            mockErrorStateObserver.onChanged(ApiErrorState())
+            loadUseCase.execute()
+            mockErrorStateObserver.onChanged(
+                ApiErrorState(
+                    network = true,
+                    showKind = ApiErrorShowKind.SCREEN
+                )
+            )
+        }
+    }
+
+    @ExperimentalCoroutinesApi
+    @Test
+    fun reloadSuccess() = testDispatcher.runBlockingTest {
         val mockStateObserver = viewModel.state.mockStateObserver()
         viewModel.event(HomeEvent.Reload)
         coVerifySequence {
             mockStateObserver.onChanged(HomeState())
             mockStateObserver.onChanged(HomeState(refresh = true))
             reloadUseCase.execute()
+            mockStateObserver.onChanged(HomeState(refresh = false))
+        }
+    }
+
+    @ExperimentalCoroutinesApi
+    @Test
+    fun reloadError() = testDispatcher.runBlockingTest {
+        val mockStateObserver = viewModel.state.mockStateObserver()
+        val mockErrorStateObserver = viewModel.error.state.mockStateObserver()
+        coEvery {
+            reloadUseCase.execute()
+        } throws NetworkErrorException()
+        viewModel.event(HomeEvent.Reload)
+        coVerifySequence {
+            mockStateObserver.onChanged(HomeState())
+            mockErrorStateObserver.onChanged(ApiErrorState())
+            mockStateObserver.onChanged(HomeState(refresh = true))
+            reloadUseCase.execute()
+            mockErrorStateObserver.onChanged(
+                ApiErrorState(
+                    network = true,
+                    showKind = ApiErrorShowKind.SCREEN
+                )
+            )
             mockStateObserver.onChanged(HomeState(refresh = false))
         }
     }

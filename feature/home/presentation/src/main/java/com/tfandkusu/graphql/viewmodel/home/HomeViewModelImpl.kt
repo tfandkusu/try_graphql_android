@@ -4,8 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.tfandkusu.graphql.usecase.home.HomeLoadUseCase
 import com.tfandkusu.graphql.usecase.home.HomeOnCreateUseCase
 import com.tfandkusu.graphql.usecase.home.HomeReloadUseCase
+import com.tfandkusu.graphql.viewmodel.error.ApiErrorShowKind
+import com.tfandkusu.graphql.viewmodel.error.ApiErrorViewModelHelper
 import com.tfandkusu.graphql.viewmodel.update
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -17,6 +20,7 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class HomeViewModelImpl @Inject constructor(
     private val onCreateUseCase: HomeOnCreateUseCase,
+    private val loadUseCase: HomeLoadUseCase,
     private val reloadUseCase: HomeReloadUseCase
 ) : HomeViewModel, ViewModel() {
 
@@ -30,6 +34,8 @@ class HomeViewModelImpl @Inject constructor(
 
     override val effect: Flow<HomeEffect> = effectChannel.receiveAsFlow()
 
+    override val error = ApiErrorViewModelHelper()
+
     override fun event(event: HomeEvent) {
         viewModelScope.launch {
             when (event) {
@@ -40,13 +46,26 @@ class HomeViewModelImpl @Inject constructor(
                         }
                     }
                 }
-                HomeEvent.Reload -> {
-                    _state.update {
-                        copy(refresh = true)
+                HomeEvent.Load -> {
+                    error.release()
+                    try {
+                        loadUseCase.execute()
+                    } catch (e: Throwable) {
+                        error.catch(e, showKind = ApiErrorShowKind.SCREEN)
                     }
-                    reloadUseCase.execute()
-                    _state.update {
-                        copy(refresh = false)
+                }
+                HomeEvent.Reload -> {
+                    try {
+                        _state.update {
+                            copy(refresh = true)
+                        }
+                        reloadUseCase.execute()
+                    } catch (e: Throwable) {
+                        error.catch(e, showKind = ApiErrorShowKind.SCREEN)
+                    } finally {
+                        _state.update {
+                            copy(refresh = false)
+                        }
                     }
                 }
             }
