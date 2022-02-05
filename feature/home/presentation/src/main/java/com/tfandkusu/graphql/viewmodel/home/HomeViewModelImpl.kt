@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.tfandkusu.graphql.usecase.home.HomeLoadUseCase
 import com.tfandkusu.graphql.usecase.home.HomeOnCreateUseCase
 import com.tfandkusu.graphql.usecase.home.HomeReloadUseCase
+import com.tfandkusu.graphql.viewmodel.error.ApiErrorShowKind
 import com.tfandkusu.graphql.viewmodel.error.ApiErrorViewModelHelper
 import com.tfandkusu.graphql.viewmodel.update
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -50,7 +51,7 @@ class HomeViewModelImpl @Inject constructor(
                     try {
                         loadUseCase.execute()
                     } catch (e: Throwable) {
-                        error.catch(e, false)
+                        error.catch(e, showKind = ApiErrorShowKind.SCREEN)
                     }
                 }
                 HomeEvent.Reload -> {
@@ -60,7 +61,7 @@ class HomeViewModelImpl @Inject constructor(
                         }
                         reloadUseCase.execute()
                     } catch (e: Throwable) {
-                        error.catch(e, false)
+                        error.catch(e, showKind = ApiErrorShowKind.SCREEN)
                     } finally {
                         _state.update {
                             copy(refresh = false)

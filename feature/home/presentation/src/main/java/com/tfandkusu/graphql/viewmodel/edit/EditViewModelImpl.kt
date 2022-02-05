@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.tfandkusu.graphql.model.GithubIssue
 import com.tfandkusu.graphql.usecase.edit.EditLoadUseCase
 import com.tfandkusu.graphql.usecase.edit.EditSubmitUseCase
+import com.tfandkusu.graphql.viewmodel.error.ApiErrorShowKind
 import com.tfandkusu.graphql.viewmodel.error.ApiErrorViewModelHelper
 import com.tfandkusu.graphql.viewmodel.update
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -63,7 +64,7 @@ class EditViewModelImpl @Inject constructor(
                             loaded = true
                         }
                     } catch (e: Throwable) {
-                        error.catch(e, false)
+                        error.catch(e, ApiErrorShowKind.SCREEN)
                         _state.update {
                             copy(
                                 progress = false
@@ -86,7 +87,7 @@ class EditViewModelImpl @Inject constructor(
                         )
                         effectChannel.send(EditEffect.BackToHome)
                     } catch (t: Throwable) {
-                        error.catch(t, true)
+                        error.catch(t, ApiErrorShowKind.DIALOG)
                         _state.update {
                             copy(progress = false)
                         }

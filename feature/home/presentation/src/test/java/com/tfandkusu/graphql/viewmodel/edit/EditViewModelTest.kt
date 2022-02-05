@@ -6,6 +6,7 @@ import com.tfandkusu.graphql.error.NetworkErrorException
 import com.tfandkusu.graphql.model.GithubIssue
 import com.tfandkusu.graphql.usecase.edit.EditLoadUseCase
 import com.tfandkusu.graphql.usecase.edit.EditSubmitUseCase
+import com.tfandkusu.graphql.viewmodel.error.ApiErrorShowKind
 import com.tfandkusu.graphql.viewmodel.error.ApiErrorState
 import com.tfandkusu.graphql.viewmodel.mockStateObserver
 import io.kotlintest.shouldBe
@@ -104,7 +105,12 @@ class EditViewModelTest {
             mockStateObserver.onChanged(EditState())
             mockErrorStateObserver.onChanged(ApiErrorState())
             loadUseCase.execute(1)
-            mockErrorStateObserver.onChanged(ApiErrorState(network = true))
+            mockErrorStateObserver.onChanged(
+                ApiErrorState(
+                    network = true,
+                    showKind = ApiErrorShowKind.SCREEN
+                )
+            )
             mockStateObserver.onChanged(EditState(progress = false))
         }
     }
@@ -171,7 +177,9 @@ class EditViewModelTest {
             mockErrorStateObserver.onChanged(ApiErrorState())
             mockStateObserver.onChanged(EditState(progress = true))
             submitUseCase.execute(issue)
-            mockErrorStateObserver.onChanged(ApiErrorState(network = true, dialogOrScreen = true))
+            mockErrorStateObserver.onChanged(
+                ApiErrorState(network = true, showKind = ApiErrorShowKind.DIALOG)
+            )
             mockStateObserver.onChanged(EditState(progress = false))
         }
     }

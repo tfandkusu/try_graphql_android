@@ -11,22 +11,34 @@ data class ApiServerError(
     val message: String
 )
 
+enum class ApiErrorShowKind {
+    /**
+     * API error show on screen.
+     */
+    SCREEN,
+
+    /**
+     * API error show on dialog.
+     */
+    DIALOG
+}
+
 data class ApiErrorState(
     val network: Boolean = false,
     val server: ApiServerError? = null,
     val unknown: Boolean = false,
-    val dialogOrScreen: Boolean = false
+    val showKind: ApiErrorShowKind = ApiErrorShowKind.SCREEN
 ) {
     private fun hasError(): Boolean {
         return network || server != null || unknown
     }
 
     fun hasErrorOnScreen(): Boolean {
-        return hasError() && !dialogOrScreen
+        return hasError() && showKind == ApiErrorShowKind.SCREEN
     }
 
     fun hasErrorOnDialog(): Boolean {
-        return hasError() && dialogOrScreen
+        return hasError() && showKind == ApiErrorShowKind.DIALOG
     }
 }
 
@@ -36,24 +48,21 @@ class ApiErrorViewModelHelper {
 
     val state: LiveData<ApiErrorState> = _state
 
-    fun catch(e: Throwable, dialogOrScreen: Boolean) {
+    fun catch(e: Throwable, showKind: ApiErrorShowKind) {
         when (e) {
             is NetworkErrorException -> {
                 _state.update {
-                    copy(network = true, dialogOrScreen = dialogOrScreen)
+                    copy(network = true, showKind = showKind)
                 }
             }
             is ServerErrorException -> {
                 _state.update {
-                    copy(
-                        server = ApiServerError(e.code, e.httpMessage),
-                        dialogOrScreen = dialogOrScreen
-                    )
+                    copy(server = ApiServerError(e.code, e.httpMessage), showKind = showKind)
                 }
             }
             else -> {
                 _state.update {
-                    copy(unknown = true, dialogOrScreen = dialogOrScreen)
+                    copy(unknown = true, showKind = showKind)
                 }
             }
         }

@@ -8,7 +8,10 @@ class ApiErrorStateTest {
     @Test
     fun hasErrorOnScreenFalse() {
         ApiErrorState().hasErrorOnScreen() shouldBe false
-        ApiErrorState(network = true, dialogOrScreen = true).hasErrorOnScreen() shouldBe false
+        ApiErrorState(
+            network = true,
+            showKind = ApiErrorShowKind.DIALOG
+        ).hasErrorOnScreen() shouldBe false
     }
 
     @Test
@@ -17,26 +20,38 @@ class ApiErrorStateTest {
         ApiErrorState(
             server = ApiServerError(
                 503, "Service Unavailable"
-            )
+            ),
+            showKind = ApiErrorShowKind.SCREEN
         ).hasErrorOnScreen() shouldBe true
         ApiErrorState(unknown = true).hasErrorOnScreen() shouldBe true
     }
 
     @Test
     fun hasErrorOnDialogFalse() {
-        ApiErrorState(dialogOrScreen = true).hasErrorOnDialog() shouldBe false
-        ApiErrorState(network = true, dialogOrScreen = false).hasErrorOnDialog() shouldBe false
+        ApiErrorState(
+            showKind = ApiErrorShowKind.DIALOG
+        ).hasErrorOnDialog() shouldBe false
+        ApiErrorState(
+            network = true,
+            showKind = ApiErrorShowKind.SCREEN
+        ).hasErrorOnDialog() shouldBe false
     }
 
     @Test
     fun hasErrorOnDialogTrue() {
-        ApiErrorState(network = true, dialogOrScreen = true).hasErrorOnDialog() shouldBe true
+        ApiErrorState(
+            network = true,
+            showKind = ApiErrorShowKind.DIALOG
+        ).hasErrorOnDialog() shouldBe true
         ApiErrorState(
             server = ApiServerError(
                 503, "Service Unavailable"
             ),
-            dialogOrScreen = true
+            showKind = ApiErrorShowKind.DIALOG
         ).hasErrorOnDialog() shouldBe true
-        ApiErrorState(unknown = true, dialogOrScreen = true).hasErrorOnDialog() shouldBe true
+        ApiErrorState(
+            unknown = true,
+            showKind = ApiErrorShowKind.DIALOG
+        ).hasErrorOnDialog() shouldBe true
     }
 }

@@ -6,6 +6,7 @@ import com.tfandkusu.graphql.error.NetworkErrorException
 import com.tfandkusu.graphql.usecase.home.HomeLoadUseCase
 import com.tfandkusu.graphql.usecase.home.HomeOnCreateUseCase
 import com.tfandkusu.graphql.usecase.home.HomeReloadUseCase
+import com.tfandkusu.graphql.viewmodel.error.ApiErrorShowKind
 import com.tfandkusu.graphql.viewmodel.error.ApiErrorState
 import com.tfandkusu.graphql.viewmodel.mockStateObserver
 import io.mockk.MockKAnnotations
@@ -101,7 +102,12 @@ class HomeViewModelTest {
             mockErrorStateObserver.onChanged(ApiErrorState())
             mockErrorStateObserver.onChanged(ApiErrorState())
             loadUseCase.execute()
-            mockErrorStateObserver.onChanged(ApiErrorState(network = true))
+            mockErrorStateObserver.onChanged(
+                ApiErrorState(
+                    network = true,
+                    showKind = ApiErrorShowKind.SCREEN
+                )
+            )
         }
     }
 
@@ -132,7 +138,12 @@ class HomeViewModelTest {
             mockErrorStateObserver.onChanged(ApiErrorState())
             mockStateObserver.onChanged(HomeState(refresh = true))
             reloadUseCase.execute()
-            mockErrorStateObserver.onChanged(ApiErrorState(network = true))
+            mockErrorStateObserver.onChanged(
+                ApiErrorState(
+                    network = true,
+                    showKind = ApiErrorShowKind.SCREEN
+                )
+            )
             mockStateObserver.onChanged(HomeState(refresh = false))
         }
     }
