@@ -28,7 +28,7 @@ import com.tfandkusu.graphql.compose.TemplateTopAppBar
 import com.tfandkusu.graphql.compose.home.listitem.GitHubIssueListItem
 import com.tfandkusu.graphql.home.compose.R
 import com.tfandkusu.graphql.ui.theme.AppTemplateTheme
-import com.tfandkusu.graphql.view.error.ApiError
+import com.tfandkusu.graphql.view.error.ApiErrorOnScreen
 import com.tfandkusu.graphql.view.info.InfoActivityAlias
 import com.tfandkusu.graphql.viewmodel.error.ApiErrorViewModelHelper
 import com.tfandkusu.graphql.viewmodel.error.useErrorState
@@ -72,8 +72,8 @@ fun HomeScreen(
             )
         }
     ) {
-        if (errorState.hasError()) {
-            ApiError(errorState) {
+        if (errorState.hasErrorOnScreen()) {
+            ApiErrorOnScreen(errorState) {
                 viewModel.event(HomeEvent.Load)
             }
         } else {

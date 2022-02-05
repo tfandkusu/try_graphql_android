@@ -24,7 +24,7 @@ import com.tfandkusu.graphql.viewmodel.error.ApiErrorState
 import com.tfandkusu.graphql.viewmodel.error.ApiServerError
 
 @Composable
-fun ApiError(apiErrorState: ApiErrorState, reload: () -> Unit) {
+fun ApiErrorOnScreen(apiErrorState: ApiErrorState, reload: () -> Unit) {
     val errorMessage = when {
         apiErrorState.network -> {
             stringResource(R.string.error_network)
@@ -65,7 +65,7 @@ fun ApiError(apiErrorState: ApiErrorState, reload: () -> Unit) {
 @Preview(showBackground = true)
 fun ApiErrorPreviewNetwork() {
     AppTemplateTheme {
-        ApiError(ApiErrorState(network = true)) {
+        ApiErrorOnScreen(ApiErrorState(network = true)) {
         }
     }
 }
@@ -74,7 +74,7 @@ fun ApiErrorPreviewNetwork() {
 @Preview(showBackground = true)
 fun ApiErrorPreviewServerError() {
     AppTemplateTheme {
-        ApiError(
+        ApiErrorOnScreen(
             ApiErrorState(
                 server = ApiServerError(
                     503, "Service Unavailable"

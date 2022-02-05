@@ -34,7 +34,7 @@ import com.tfandkusu.graphql.catalog.GitHubIssueCatalog
 import com.tfandkusu.graphql.compose.TemplateTopAppBar
 import com.tfandkusu.graphql.home.compose.R
 import com.tfandkusu.graphql.ui.theme.AppTemplateTheme
-import com.tfandkusu.graphql.view.error.ApiError
+import com.tfandkusu.graphql.view.error.ApiErrorOnScreen
 import com.tfandkusu.graphql.viewmodel.edit.EditEffect
 import com.tfandkusu.graphql.viewmodel.edit.EditEvent
 import com.tfandkusu.graphql.viewmodel.edit.EditState
@@ -81,8 +81,8 @@ fun EditScreen(viewModel: EditViewModel, number: Int, backToHome: () -> Unit) {
             )
         }
     ) {
-        if (errorState.hasError()) {
-            ApiError(errorState) {
+        if (errorState.hasErrorOnScreen()) {
+            ApiErrorOnScreen(errorState) {
                 viewModel.event(EditEvent.Load(number))
             }
         } else {
