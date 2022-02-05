@@ -31,7 +31,9 @@ fun ApiError(apiErrorState: ApiErrorState, reload: () -> Unit) {
         }
         apiErrorState.server != null -> {
             stringResource(
-                R.string.error_server_error
+                R.string.error_server_error,
+                apiErrorState.server.code,
+                apiErrorState.server.message
             )
         }
         else -> {

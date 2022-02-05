@@ -11,7 +11,7 @@ class ApiErrorMapper {
                 NetworkErrorException()
             }
             is ApolloHttpException -> {
-                ServerErrorException(e.statusCode, e.message ?: "")
+                ServerErrorException(e.statusCode, "Server error")
             }
             else -> {
                 UnknownErrorException()
