@@ -34,6 +34,7 @@ import com.tfandkusu.graphql.catalog.GitHubIssueCatalog
 import com.tfandkusu.graphql.compose.TemplateTopAppBar
 import com.tfandkusu.graphql.home.compose.R
 import com.tfandkusu.graphql.ui.theme.AppTemplateTheme
+import com.tfandkusu.graphql.view.error.ApiErrorOnDialog
 import com.tfandkusu.graphql.view.error.ApiErrorOnScreen
 import com.tfandkusu.graphql.viewmodel.edit.EditEffect
 import com.tfandkusu.graphql.viewmodel.edit.EditEvent
@@ -144,6 +145,7 @@ fun EditScreen(viewModel: EditViewModel, number: Int, backToHome: () -> Unit) {
             }
         }
     }
+    ApiErrorOnDialog(viewModel.error, errorState)
 }
 
 @Composable

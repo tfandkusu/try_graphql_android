@@ -2,6 +2,7 @@
 <resources>
     <string name="app_name">Try GraphQL</string>
     <string name="author_name">Haruhiko Takada</string>
+    <string name="title_error">Error</string>
     <string name="error_network">Unable to connect</string>
     <string name="error_server_error">Server error\n%d %s</string>
     <string name="error_unknown">Unknown error</string>
