@@ -4,6 +4,22 @@ import io.kotlintest.shouldBe
 import org.junit.Test
 
 class ApiErrorStateTest {
+    @Test
+    fun hasErrorFalse() {
+        ApiErrorState().hasError() shouldBe false
+    }
+
+    @Test
+    fun hasErrorTrue() {
+        ApiErrorState(network = true).hasError() shouldBe true
+        ApiErrorState(
+            server = ApiServerError(
+                503, "Service Unavailable"
+            ),
+            showKind = ApiErrorShowKind.SCREEN
+        ).hasError() shouldBe true
+        ApiErrorState(unknown = true).hasError() shouldBe true
+    }
 
     @Test
     fun hasErrorOnScreenFalse() {

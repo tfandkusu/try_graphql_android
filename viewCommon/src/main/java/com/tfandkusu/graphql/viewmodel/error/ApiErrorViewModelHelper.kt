@@ -29,7 +29,7 @@ data class ApiErrorState(
     val unknown: Boolean = false,
     val showKind: ApiErrorShowKind = ApiErrorShowKind.SCREEN
 ) {
-    private fun hasError(): Boolean {
+    fun hasError(): Boolean {
         return network || server != null || unknown
     }
 

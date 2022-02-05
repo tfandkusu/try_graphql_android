@@ -81,7 +81,7 @@ fun EditScreen(viewModel: EditViewModel, number: Int, backToHome: () -> Unit) {
             )
         }
     ) {
-        if (errorState.hasErrorOnScreen()) {
+        if (errorState.hasError()) {
             ApiError(errorState) {
                 viewModel.event(EditEvent.Load(number))
             }

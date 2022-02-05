@@ -72,7 +72,7 @@ fun HomeScreen(
             )
         }
     ) {
-        if (errorState.hasErrorOnScreen()) {
+        if (errorState.hasError()) {
             ApiError(errorState) {
                 viewModel.event(HomeEvent.Load)
             }
