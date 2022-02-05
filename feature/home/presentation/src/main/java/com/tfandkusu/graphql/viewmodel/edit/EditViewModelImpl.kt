@@ -23,7 +23,7 @@ class EditViewModelImpl @Inject constructor(
 ) : EditViewModel, ViewModel() {
     override fun createDefaultState() = EditState()
 
-    private val _state = MutableLiveData(EditState())
+    private val _state = MutableLiveData(createDefaultState())
 
     override val state: LiveData<EditState>
         get() = _state
