@@ -11,5 +11,18 @@ interface EditLoadUseCase {
 class EditLoadUseCaseImpl @Inject constructor(
     private val repository: GithubIssueRepository
 ) : EditLoadUseCase {
-    override suspend fun execute(number: Int) = repository.get(number)
+    override suspend fun execute(number: Int): GithubIssue? {
+        return if (number == 0) {
+            // Add Issue
+            GithubIssue(
+                "",
+                0,
+                "",
+                false
+            )
+        } else {
+            // Edit Issue
+            repository.get(number)
+        }
+    }
 }
