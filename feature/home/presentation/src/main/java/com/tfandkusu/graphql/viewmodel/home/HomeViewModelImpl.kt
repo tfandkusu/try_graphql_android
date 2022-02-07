@@ -36,10 +36,15 @@ class HomeViewModelImpl @Inject constructor(
 
     override val error = ApiErrorViewModelHelper()
 
+    private var loaded = false
+
     override fun event(event: HomeEvent) {
         viewModelScope.launch {
             when (event) {
                 HomeEvent.OnCreate -> {
+                    if (loaded)
+                        return@launch
+                    loaded = true
                     onCreateUseCase.execute().collect { issues ->
                         _state.update {
                             copy(issues = issues, progress = false)
