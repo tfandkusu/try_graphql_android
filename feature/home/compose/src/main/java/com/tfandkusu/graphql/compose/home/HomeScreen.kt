@@ -67,7 +67,7 @@ fun HomeScreen(
                     }) {
                         Icon(
                             Icons.Outlined.Info,
-                            contentDescription = stringResource(R.string.action_information)
+                            contentDescription = stringResource(R.string.action_information),
                         )
                     }
                 }
