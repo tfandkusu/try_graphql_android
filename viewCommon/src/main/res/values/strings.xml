@@ -10,7 +10,8 @@
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
     <!-- Edit screen -->
-    <string name="title_edit">Edit Issue #%d</string>
+    <string name="title_edit_update">Edit Issue #%d</string>
+    <string name="title_edit_add">Add Issue</string>
     <string name="edit_label_title">Title</string>
     <string name="edit_label_closed">Closed</string>
 </resources>

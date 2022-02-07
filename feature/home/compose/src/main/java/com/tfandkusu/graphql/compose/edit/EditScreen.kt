@@ -65,7 +65,13 @@ fun EditScreen(viewModel: EditViewModel, number: Int, backToHome: () -> Unit) {
         topBar = {
             TemplateTopAppBar(
                 title = {
-                    Text(stringResource(R.string.title_edit, number))
+                    Text(
+                        if (number == 0) {
+                            stringResource(R.string.title_edit_add)
+                        } else {
+                            stringResource(R.string.title_edit_update, number)
+                        }
+                    )
                 },
                 navigationIcon = {
                     IconButton(onClick = {

@@ -6,4 +6,5 @@
     <string name="action_back_to_home">Back to home</string>
     <string name="edit_update">Update</string>
     <string name="edit_add">Add</string>
+    <string name="home_add">Add issue</string>
 </resources>
