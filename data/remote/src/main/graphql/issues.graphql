@@ -41,3 +41,15 @@ mutation updateIssueState($id: ID!, $state: IssueState!) {
         }
     }
 }
+
+query getRepository($owner: String!, $name: String!) {
+    repository(name: $name, owner: $owner) {
+        id
+    }
+}
+
+mutation createIssue($repositoryId: ID!, $title: String!) {
+    createIssue(input: {repositoryId: $repositoryId, title: $title}) {
+        clientMutationId
+    }
+}

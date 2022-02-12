@@ -127,4 +127,15 @@ class GithubIssueRepositoryTest {
             remoteDataStore.fetch()
         }
     }
+
+    @Test
+    fun create() = runBlocking {
+        val issues = GitHubIssueCatalog.getList()
+        val issue = issues.last()
+        repository.create(issue)
+        coVerifySequence {
+            remoteDataStore.create(issue)
+            remoteDataStore.fetch()
+        }
+    }
 }
