@@ -119,7 +119,11 @@ class GithubIssueRemoteDataStoreImpl @Inject constructor(
                 )
             ).execute()
             response.data?.repository?.id?.let { repositoryId ->
-                apolloClient.mutation(CreateIssueMutation(repositoryId, issue.title))
+                apolloClient.mutation(
+                    CreateIssueMutation(repositoryId, issue.title)
+                ).doNotStore(
+                    true
+                ).execute()
             }
         } catch (e: ApolloException) {
             throw errorHelper.mapError(e)

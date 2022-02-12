@@ -20,6 +20,7 @@ sealed class EditEffect {
 }
 
 data class EditState(
+    val editMode: Boolean = false,
     val progress: Boolean = true,
     val id: String = "",
     val number: Int = 0,

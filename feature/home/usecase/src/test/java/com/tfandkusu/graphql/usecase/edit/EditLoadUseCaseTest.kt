@@ -27,11 +27,14 @@ class EditLoadUseCaseTest {
 
     @Test
     fun executeAdd() = runBlocking {
-        useCase.execute(0) shouldBe GithubIssue(
-            "",
-            0,
-            "",
-            false
+        useCase.execute(0) shouldBe EditLoadUseCaseResult(
+            false,
+            GithubIssue(
+                "",
+                0,
+                "",
+                false
+            )
         )
     }
 
@@ -41,7 +44,7 @@ class EditLoadUseCaseTest {
         coEvery {
             repository.get(1)
         } returns issue
-        useCase.execute(1) shouldBe issue
+        useCase.execute(1) shouldBe EditLoadUseCaseResult(true, issue)
         coVerifySequence {
             repository.get(1)
         }

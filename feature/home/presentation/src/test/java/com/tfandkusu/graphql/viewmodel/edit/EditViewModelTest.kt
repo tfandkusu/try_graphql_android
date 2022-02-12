@@ -5,6 +5,7 @@ import com.tfandkusu.graphql.catalog.GitHubIssueCatalog
 import com.tfandkusu.graphql.error.NetworkErrorException
 import com.tfandkusu.graphql.model.GithubIssue
 import com.tfandkusu.graphql.usecase.edit.EditLoadUseCase
+import com.tfandkusu.graphql.usecase.edit.EditLoadUseCaseResult
 import com.tfandkusu.graphql.usecase.edit.EditSubmitUseCase
 import com.tfandkusu.graphql.viewmodel.error.ApiErrorShowKind
 import com.tfandkusu.graphql.viewmodel.error.ApiErrorState
@@ -64,11 +65,19 @@ class EditViewModelTest {
 
     @ExperimentalCoroutinesApi
     @Test
-    fun loadSuccess() = testDispatcher.runBlockingTest {
-        val issue = GitHubIssueCatalog.getList().last()
+    fun loadSuccessCreate() = testDispatcher.runBlockingTest {
+        val result = EditLoadUseCaseResult(
+            false,
+            GithubIssue(
+                "",
+                0,
+                "",
+                false
+            )
+        )
         coEvery {
             loadUseCase.execute(1)
-        } returns issue
+        } returns result
         val mockStateObserver = viewModel.state.mockStateObserver()
         viewModel.event(EditEvent.Load(1))
         // This process is executed only once.
@@ -79,6 +88,37 @@ class EditViewModelTest {
             loadUseCase.execute(1)
             mockStateObserver.onChanged(
                 EditState(
+                    false,
+                    false,
+                    "",
+                    0,
+                    "",
+                    false,
+                    false
+                )
+            )
+        }
+    }
+
+    @ExperimentalCoroutinesApi
+    @Test
+    fun loadSuccessEdit() = testDispatcher.runBlockingTest {
+        val issue = GitHubIssueCatalog.getList().last()
+        val result = EditLoadUseCaseResult(true, issue)
+        coEvery {
+            loadUseCase.execute(1)
+        } returns result
+        val mockStateObserver = viewModel.state.mockStateObserver()
+        viewModel.event(EditEvent.Load(1))
+        // This process is executed only once.
+        viewModel.event(EditEvent.Load(1))
+        coVerifySequence {
+            mockStateObserver.onChanged(EditState())
+            mockStateObserver.onChanged(EditState())
+            loadUseCase.execute(1)
+            mockStateObserver.onChanged(
+                EditState(
+                    true,
                     false,
                     "id_1",
                     1,
