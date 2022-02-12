@@ -15,7 +15,7 @@ class EditSubmitUseCaseImpl @Inject constructor(
         if (issue.id.isNotEmpty()) {
             repository.update(issue)
         } else {
-            // TODO Add issue
+            repository.create(issue)
         }
     }
 }

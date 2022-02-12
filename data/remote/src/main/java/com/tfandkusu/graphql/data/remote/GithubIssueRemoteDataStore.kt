@@ -6,7 +6,9 @@ import com.apollographql.apollo3.cache.normalized.doNotStore
 import com.apollographql.apollo3.cache.normalized.fetchPolicy
 import com.apollographql.apollo3.cache.normalized.watch
 import com.apollographql.apollo3.exception.ApolloException
+import com.tfandkusu.graphql.api.CreateIssueMutation
 import com.tfandkusu.graphql.api.GetIssueQuery
+import com.tfandkusu.graphql.api.GetRepositoryQuery
 import com.tfandkusu.graphql.api.ListIssuesQuery
 import com.tfandkusu.graphql.api.UpdateIssueStateMutation
 import com.tfandkusu.graphql.api.UpdateIssueTitleMutation
@@ -26,6 +28,8 @@ interface GithubIssueRemoteDataStore {
     suspend fun get(number: Int): GithubIssue?
 
     suspend fun update(issue: GithubIssue)
+
+    suspend fun create(issue: GithubIssue)
 }
 
 class GithubIssueRemoteDataStoreImpl @Inject constructor(
@@ -100,6 +104,27 @@ class GithubIssueRemoteDataStoreImpl @Inject constructor(
                     }
                 )
             ).doNotStore(true).execute()
+        } catch (e: ApolloException) {
+            throw errorHelper.mapError(e)
+        }
+    }
+
+    override suspend fun create(issue: GithubIssue) {
+        val ownerName = BuildConfig.OWNER_NAME
+        val repositoryName = BuildConfig.REPOSITORY_NAME
+        try {
+            val response = apolloClient.query(
+                GetRepositoryQuery(
+                    ownerName, repositoryName
+                )
+            ).execute()
+            response.data?.repository?.id?.let { repositoryId ->
+                apolloClient.mutation(
+                    CreateIssueMutation(repositoryId, issue.title)
+                ).doNotStore(
+                    true
+                ).execute()
+            }
         } catch (e: ApolloException) {
             throw errorHelper.mapError(e)
         }

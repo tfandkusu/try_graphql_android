@@ -65,7 +65,13 @@ fun EditScreen(viewModel: EditViewModel, number: Int, backToHome: () -> Unit) {
         topBar = {
             TemplateTopAppBar(
                 title = {
-                    Text(stringResource(R.string.title_edit, number))
+                    Text(
+                        if (number == 0) {
+                            stringResource(R.string.title_edit_add)
+                        } else {
+                            stringResource(R.string.title_edit_update, number)
+                        }
+                    )
                 },
                 navigationIcon = {
                     IconButton(onClick = {
@@ -108,20 +114,22 @@ fun EditScreen(viewModel: EditViewModel, number: Int, backToHome: () -> Unit) {
                         onValueChange = { viewModel.event(EditEvent.UpdateTitle(it)) },
                         label = { Text(stringResource(R.string.edit_label_title)) }
                     )
-                    Row(
-                        modifier = Modifier.fillMaxWidth()
-                            .padding(horizontal = 16.dp)
-                    ) {
-                        Text(
-                            stringResource(R.string.edit_label_closed)
-                        )
-                        Spacer(modifier = Modifier.width(16.dp))
-                        Switch(
-                            checked = state.closed,
-                            onCheckedChange = {
-                                viewModel.event(EditEvent.UpdateClosed(it))
-                            },
-                        )
+                    if (state.editMode) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth()
+                                .padding(horizontal = 16.dp)
+                        ) {
+                            Text(
+                                stringResource(R.string.edit_label_closed)
+                            )
+                            Spacer(modifier = Modifier.width(16.dp))
+                            Switch(
+                                checked = state.closed,
+                                onCheckedChange = {
+                                    viewModel.event(EditEvent.UpdateClosed(it))
+                                },
+                            )
+                        }
                     }
                     Spacer(modifier = Modifier.height(16.dp))
                     Button(
@@ -138,7 +146,13 @@ fun EditScreen(viewModel: EditViewModel, number: Int, backToHome: () -> Unit) {
                         },
                         enabled = state.submitEnabled
                     ) {
-                        Text(stringResource(R.string.edit_update))
+                        Text(
+                            if (state.editMode) {
+                                stringResource(R.string.edit_update)
+                            } else {
+                                stringResource(R.string.edit_add)
+                            }
+                        )
                     }
                     Spacer(modifier = Modifier.height(16.dp))
                 }
@@ -150,9 +164,28 @@ fun EditScreen(viewModel: EditViewModel, number: Int, backToHome: () -> Unit) {
 
 @Composable
 @Preview
-fun EditScreenPreview() {
+fun EditScreenPreviewCreate() {
+    val state = EditState(
+        false,
+        false,
+        "",
+        0,
+        "",
+        false,
+        false
+    )
+    AppTemplateTheme {
+        EditScreen(EditViewModelPreview(state), 0) {
+        }
+    }
+}
+
+@Composable
+@Preview
+fun EditScreenPreviewUpdate() {
     val issue = GitHubIssueCatalog.getList().last()
     val state = EditState(
+        true,
         false,
         "id_1",
         issue.number,

@@ -49,10 +49,11 @@ class EditViewModelImpl @Inject constructor(
                     }
                     error.release()
                     try {
-                        val issue = loadUseCase.execute(event.number)
-                        issue?.let {
+                        val result = loadUseCase.execute(event.number)
+                        result.issue?.let {
                             _state.update {
                                 copy(
+                                    editMode = result.editMode,
                                     progress = false,
                                     id = it.id,
                                     number = it.number,

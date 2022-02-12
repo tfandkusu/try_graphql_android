@@ -6,11 +6,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -65,11 +67,18 @@ fun HomeScreen(
                     }) {
                         Icon(
                             Icons.Outlined.Info,
-                            contentDescription = stringResource(R.string.action_information)
+                            contentDescription = stringResource(R.string.action_information),
                         )
                     }
                 }
             )
+        },
+        floatingActionButton = {
+            FloatingActionButton(onClick = {
+                editIssue(0)
+            }) {
+                Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.home_add))
+            }
         }
     ) {
         if (errorState.hasErrorOnScreen()) {
