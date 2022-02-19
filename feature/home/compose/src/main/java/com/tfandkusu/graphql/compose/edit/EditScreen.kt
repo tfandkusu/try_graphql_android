@@ -180,6 +180,7 @@ fun EditScreenPreviewCreate() {
     val state = EditState(
         false,
         false,
+        false,
         "",
         0,
         "",
@@ -198,6 +199,7 @@ fun EditScreenPreviewUpdate() {
     val issue = GitHubIssueCatalog.getList().last()
     val state = EditState(
         true,
+        false,
         false,
         "id_1",
         issue.number,

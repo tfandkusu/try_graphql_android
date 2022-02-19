@@ -95,6 +95,7 @@ class EditViewModelTest {
                 EditState(
                     false,
                     false,
+                    false,
                     "",
                     0,
                     "",
@@ -124,6 +125,7 @@ class EditViewModelTest {
             mockStateObserver.onChanged(
                 EditState(
                     true,
+                    false,
                     false,
                     "id_1",
                     1,
@@ -162,11 +164,26 @@ class EditViewModelTest {
 
     @ExperimentalCoroutinesApi
     @Test
+    fun cancelDelete() = testDispatcher.runBlockingTest {
+        val mockStateObserver = viewModel.state.mockStateObserver()
+        viewModel.event(EditEvent.ConfirmDelete)
+        viewModel.event(EditEvent.CancelDelete)
+        coVerifySequence {
+            mockStateObserver.onChanged(EditState())
+            mockStateObserver.onChanged(EditState(confirmDelete = true))
+            mockStateObserver.onChanged(EditState())
+        }
+    }
+
+    @ExperimentalCoroutinesApi
+    @Test
     fun deleteSuccess() = testDispatcher.runBlockingTest {
         val mockStateObserver = viewModel.state.mockStateObserver()
+        viewModel.event(EditEvent.ConfirmDelete)
         viewModel.event(EditEvent.Delete("id_1"))
         coVerifySequence {
             mockStateObserver.onChanged(EditState())
+            mockStateObserver.onChanged(EditState(confirmDelete = true))
             mockStateObserver.onChanged(EditState(progress = true))
             deleteUseCase.execute("id_1")
         }

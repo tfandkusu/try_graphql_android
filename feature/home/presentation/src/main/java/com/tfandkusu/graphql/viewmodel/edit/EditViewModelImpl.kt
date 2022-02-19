@@ -75,9 +75,23 @@ class EditViewModelImpl @Inject constructor(
                         }
                     }
                 }
+                is EditEvent.ConfirmDelete -> {
+                    _state.update {
+                        copy(
+                            confirmDelete = true
+                        )
+                    }
+                }
+                is EditEvent.CancelDelete -> {
+                    _state.update {
+                        copy(
+                            confirmDelete = false
+                        )
+                    }
+                }
                 is EditEvent.Delete -> {
                     _state.update {
-                        copy(progress = true)
+                        copy(progress = true, confirmDelete = false)
                     }
                     try {
                         deleteUseCase.execute(event.id)
