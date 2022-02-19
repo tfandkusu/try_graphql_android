@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
@@ -17,9 +18,12 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Switch
 import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -85,6 +89,18 @@ fun EditScreen(viewModel: EditViewModel, number: Int, backToHome: () -> Unit) {
                         )
                     }
                 },
+                actions = {
+                    if (number >= 1) {
+                        IconButton(onClick = {
+                            viewModel.event(EditEvent.ConfirmDelete)
+                        }) {
+                            Icon(
+                                Icons.Default.Delete,
+                                contentDescription = stringResource(R.string.edit_delete)
+                            )
+                        }
+                    }
+                }
             )
         }
     ) {
@@ -160,12 +176,59 @@ fun EditScreen(viewModel: EditViewModel, number: Int, backToHome: () -> Unit) {
         }
     }
     ApiErrorOnDialog(viewModel.error, errorState)
+    DeleteConfirmDialog(viewModel, state.confirmDelete, state.id)
+}
+
+@Composable
+fun DeleteConfirmDialog(viewModel: EditViewModel, show: Boolean, id: String) {
+    if (show) {
+        AlertDialog(
+            onDismissRequest = {
+                viewModel.event(EditEvent.CancelDelete)
+            },
+            title = {
+                Text(
+                    text = stringResource(
+                        R.string.edit_confirm_delete_title
+                    )
+                )
+            },
+            text = {
+                Text(
+                    stringResource(
+                        R.string.edit_confirm_delete_message
+                    )
+                )
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        // confirmをタップしたとき
+                        viewModel.event(EditEvent.Delete(id))
+                    }
+                ) {
+                    Text(stringResource(R.string.edit_confirm_delete_yes))
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        // confirmをタップしたとき
+                        viewModel.event(EditEvent.CancelDelete)
+                    }
+                ) {
+                    Text(stringResource(R.string.edit_confirm_delete_no))
+                }
+            }
+        )
+    }
 }
 
 @Composable
 @Preview
 fun EditScreenPreviewCreate() {
     val state = EditState(
+        false,
         false,
         false,
         "",
@@ -186,6 +249,7 @@ fun EditScreenPreviewUpdate() {
     val issue = GitHubIssueCatalog.getList().last()
     val state = EditState(
         true,
+        false,
         false,
         "id_1",
         issue.number,

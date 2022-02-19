@@ -138,4 +138,13 @@ class GithubIssueRepositoryTest {
             remoteDataStore.fetch()
         }
     }
+
+    @Test
+    fun delete() = runBlocking {
+        repository.delete("id_1")
+        coVerifySequence {
+            remoteDataStore.delete("id_1")
+            remoteDataStore.fetch()
+        }
+    }
 }

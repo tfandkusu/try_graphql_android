@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tfandkusu.graphql.model.GithubIssue
+import com.tfandkusu.graphql.usecase.edit.EditDeleteUseCase
 import com.tfandkusu.graphql.usecase.edit.EditLoadUseCase
 import com.tfandkusu.graphql.usecase.edit.EditSubmitUseCase
 import com.tfandkusu.graphql.viewmodel.error.ApiErrorShowKind
@@ -19,6 +20,7 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class EditViewModelImpl @Inject constructor(
     private val loadUseCase: EditLoadUseCase,
+    private val deleteUseCase: EditDeleteUseCase,
     private val submitUseCase: EditSubmitUseCase
 ) : EditViewModel, ViewModel() {
     override fun createDefaultState() = EditState()
@@ -70,6 +72,34 @@ class EditViewModelImpl @Inject constructor(
                             copy(
                                 progress = false
                             )
+                        }
+                    }
+                }
+                is EditEvent.ConfirmDelete -> {
+                    _state.update {
+                        copy(
+                            confirmDelete = true
+                        )
+                    }
+                }
+                is EditEvent.CancelDelete -> {
+                    _state.update {
+                        copy(
+                            confirmDelete = false
+                        )
+                    }
+                }
+                is EditEvent.Delete -> {
+                    _state.update {
+                        copy(progress = true, confirmDelete = false)
+                    }
+                    try {
+                        deleteUseCase.execute(event.id)
+                        effectChannel.send(EditEffect.BackToHome)
+                    } catch (t: Throwable) {
+                        error.catch(t, ApiErrorShowKind.DIALOG)
+                        _state.update {
+                            copy(progress = false)
                         }
                     }
                 }

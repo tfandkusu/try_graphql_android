@@ -4,6 +4,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.tfandkusu.graphql.catalog.GitHubIssueCatalog
 import com.tfandkusu.graphql.error.NetworkErrorException
 import com.tfandkusu.graphql.model.GithubIssue
+import com.tfandkusu.graphql.usecase.edit.EditDeleteUseCase
 import com.tfandkusu.graphql.usecase.edit.EditLoadUseCase
 import com.tfandkusu.graphql.usecase.edit.EditLoadUseCaseResult
 import com.tfandkusu.graphql.usecase.edit.EditSubmitUseCase
@@ -41,6 +42,9 @@ class EditViewModelTest {
     private lateinit var loadUseCase: EditLoadUseCase
 
     @MockK(relaxed = true)
+    private lateinit var deleteUseCase: EditDeleteUseCase
+
+    @MockK(relaxed = true)
     private lateinit var submitUseCase: EditSubmitUseCase
 
     private lateinit var viewModel: EditViewModel
@@ -52,6 +56,7 @@ class EditViewModelTest {
         MockKAnnotations.init(this)
         viewModel = EditViewModelImpl(
             loadUseCase,
+            deleteUseCase,
             submitUseCase
         )
     }
@@ -90,6 +95,7 @@ class EditViewModelTest {
                 EditState(
                     false,
                     false,
+                    false,
                     "",
                     0,
                     "",
@@ -120,6 +126,7 @@ class EditViewModelTest {
                 EditState(
                     true,
                     false,
+                    false,
                     "id_1",
                     1,
                     issue.title,
@@ -149,6 +156,58 @@ class EditViewModelTest {
                 ApiErrorState(
                     network = true,
                     showKind = ApiErrorShowKind.SCREEN
+                )
+            )
+            mockStateObserver.onChanged(EditState(progress = false))
+        }
+    }
+
+    @ExperimentalCoroutinesApi
+    @Test
+    fun cancelDelete() = testDispatcher.runBlockingTest {
+        val mockStateObserver = viewModel.state.mockStateObserver()
+        viewModel.event(EditEvent.ConfirmDelete)
+        viewModel.event(EditEvent.CancelDelete)
+        coVerifySequence {
+            mockStateObserver.onChanged(EditState())
+            mockStateObserver.onChanged(EditState(confirmDelete = true))
+            mockStateObserver.onChanged(EditState())
+        }
+    }
+
+    @ExperimentalCoroutinesApi
+    @Test
+    fun deleteSuccess() = testDispatcher.runBlockingTest {
+        val mockStateObserver = viewModel.state.mockStateObserver()
+        viewModel.event(EditEvent.ConfirmDelete)
+        viewModel.event(EditEvent.Delete("id_1"))
+        coVerifySequence {
+            mockStateObserver.onChanged(EditState())
+            mockStateObserver.onChanged(EditState(confirmDelete = true))
+            mockStateObserver.onChanged(EditState(progress = true))
+            deleteUseCase.execute("id_1")
+        }
+        viewModel.effect.first() shouldBe EditEffect.BackToHome
+    }
+
+    @ExperimentalCoroutinesApi
+    @Test
+    fun deleteError() = testDispatcher.runBlockingTest {
+        coEvery {
+            deleteUseCase.execute("id_1")
+        } throws NetworkErrorException()
+        val mockStateObserver = viewModel.state.mockStateObserver()
+        val mockErrorStateObserver = viewModel.error.state.mockStateObserver()
+        viewModel.event(EditEvent.Delete("id_1"))
+        coVerifySequence {
+            mockStateObserver.onChanged(EditState())
+            mockErrorStateObserver.onChanged(ApiErrorState())
+            mockStateObserver.onChanged(EditState())
+            deleteUseCase.execute("id_1")
+            mockErrorStateObserver.onChanged(
+                ApiErrorState(
+                    network = true,
+                    showKind = ApiErrorShowKind.DIALOG
                 )
             )
             mockStateObserver.onChanged(EditState(progress = false))

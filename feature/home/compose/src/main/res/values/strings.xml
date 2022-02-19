@@ -7,4 +7,5 @@
     <string name="edit_update">Update</string>
     <string name="edit_add">Submit new issue</string>
     <string name="home_add">Add issue</string>
+    <string name="edit_delete">Delete issue</string>
 </resources>

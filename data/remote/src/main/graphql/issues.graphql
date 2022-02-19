@@ -53,3 +53,10 @@ mutation createIssue($repositoryId: ID!, $title: String!) {
         clientMutationId
     }
 }
+
+mutation deleteIssue($issueId: ID!) {
+    deleteIssue(input: {issueId: $issueId}) {
+        clientMutationId
+    }
+}
+

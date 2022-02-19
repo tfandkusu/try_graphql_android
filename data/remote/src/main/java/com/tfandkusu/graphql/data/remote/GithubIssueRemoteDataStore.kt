@@ -7,6 +7,7 @@ import com.apollographql.apollo3.cache.normalized.fetchPolicy
 import com.apollographql.apollo3.cache.normalized.watch
 import com.apollographql.apollo3.exception.ApolloException
 import com.tfandkusu.graphql.api.CreateIssueMutation
+import com.tfandkusu.graphql.api.DeleteIssueMutation
 import com.tfandkusu.graphql.api.GetIssueQuery
 import com.tfandkusu.graphql.api.GetRepositoryQuery
 import com.tfandkusu.graphql.api.ListIssuesQuery
@@ -30,6 +31,8 @@ interface GithubIssueRemoteDataStore {
     suspend fun update(issue: GithubIssue)
 
     suspend fun create(issue: GithubIssue)
+
+    suspend fun delete(id: String)
 }
 
 class GithubIssueRemoteDataStoreImpl @Inject constructor(
@@ -125,6 +128,14 @@ class GithubIssueRemoteDataStoreImpl @Inject constructor(
                     true
                 ).execute()
             }
+        } catch (e: ApolloException) {
+            throw errorHelper.mapError(e)
+        }
+    }
+
+    override suspend fun delete(id: String) {
+        try {
+            apolloClient.mutation(DeleteIssueMutation(id)).execute()
         } catch (e: ApolloException) {
             throw errorHelper.mapError(e)
         }

@@ -14,4 +14,8 @@
     <string name="title_edit_add">Add Issue</string>
     <string name="edit_label_title">Title</string>
     <string name="edit_label_closed">Closed</string>
+    <string name="edit_confirm_delete_title">Confirm delete</string>
+    <string name="edit_confirm_delete_message">Are you sure ?</string>
+    <string name="edit_confirm_delete_yes">Delete</string>
+    <string name="edit_confirm_delete_no">Cancel</string>
 </resources>
