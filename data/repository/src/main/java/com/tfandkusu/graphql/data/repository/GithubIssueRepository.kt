@@ -19,6 +19,8 @@ interface GithubIssueRepository {
     suspend fun update(issue: GithubIssue)
 
     suspend fun create(issue: GithubIssue)
+
+    suspend fun delete(id: String)
 }
 
 class GithubIssueRepositoryImpl @Inject constructor(
@@ -53,6 +55,11 @@ class GithubIssueRepositoryImpl @Inject constructor(
 
     override suspend fun create(issue: GithubIssue) {
         remoteDataStore.create(issue)
+        remoteDataStore.fetch()
+    }
+
+    override suspend fun delete(id: String) {
+        remoteDataStore.delete(id)
         remoteDataStore.fetch()
     }
 }
