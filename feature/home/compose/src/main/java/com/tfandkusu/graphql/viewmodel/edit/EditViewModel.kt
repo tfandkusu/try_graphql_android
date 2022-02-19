@@ -5,6 +5,7 @@ import com.tfandkusu.graphql.viewmodel.error.ApiErrorViewModelHelper
 
 sealed class EditEvent {
     data class Load(val number: Int) : EditEvent()
+    data class Delete(val id: String) : EditEvent()
     data class UpdateTitle(val title: String) : EditEvent()
     data class UpdateClosed(val closed: Boolean) : EditEvent()
     data class Submit(
