@@ -45,7 +45,6 @@ The 3 layers described in [Android recommended app architecture](https://develop
     - [Jetpack Compose](https://developer.android.com/jetpack/compose)
     - [ViewModel](https://developer.android.com/topic/libraries/architecture/viewmodel)
 - Domain Layer
-    - This layer prevents fat ViewModel problem.
 - Data Layer
     - Repository
     - Data Sources
