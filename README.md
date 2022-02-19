@@ -20,7 +20,7 @@ Edit `local.properties`
 
 | key | value |
 | --- | --- |
-| github_token | Your [Github personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token). Scope is **repo** |
+| github_token | Your [Github personal access token](https://docs.github.com/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token). Scope is **repo** |
 | owner_name | Repository's user name or organization name. |
 | repository_name | Repository's name. |
 
@@ -69,6 +69,15 @@ It has minimum dependency to speed up compose preview.
 - Common API error handling
 - Utility for ViewModel and LiveData
 
+## localDataStore
+
+- Save cache time to local storage using Room.
+
+## remoteDataStore
+
+- API client using [apollo-kotlin](https://github.com/apollographql/apollo-kotlin)
+- Save and watch cache using [normalized cache](https://www.apollographql.com/docs/kotlin/v2/essentials/normalized-cache/) of apollo-kotlin.
+
 # Technology used
 
 All libraries used are defined in [lib.versions.toml](https://github.com/tfandkusu/try_graphql_android/blob/main/gradle/libs.versions.toml)
@@ -87,6 +96,7 @@ All libraries used are defined in [lib.versions.toml](https://github.com/tfandku
 ## Data layer
 
 - [apollo-kotlin](https://github.com/apollographql/apollo-kotlin)
+- [Room](https://developer.android.com/jetpack/androidx/releases/room)
 
 ## DI
 
