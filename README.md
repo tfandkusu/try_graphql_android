@@ -39,12 +39,22 @@ This repository is generated from [tfandkusu/android_app_template](https://githu
 
 # Architecture
 
-- **MVVM** of [Android recommended app architecture](https://developer.android.com/jetpack/guide#recommended-app-arch) 
-- **Use Case** for resolving fat ViewModel problem
+The 3 layers described in [Android recommended app architecture](https://developer.android.com/jetpack/guide#recommended-app-arch)
+
+- UI Layer
+    - [Jetpack Compose](https://developer.android.com/jetpack/compose)
+    - [ViewModel](https://developer.android.com/topic/libraries/architecture/viewmodel)
+- Domain Layer
+    - This layer prevents fat ViewModel problem.
+- Data Layer
+    - Repository
+    - Data Sources
+      - [apollo-kotlin](https://github.com/apollographql/apollo-kotlin)
+      - [Room](https://developer.android.com/jetpack/androidx/releases/room)
 
 # Module structure
 
-<img src="https://user-images.githubusercontent.com/16898831/147387105-669464f2-9e86-405a-b13e-7fd4213920bc.png" width="720">
+![image](https://user-images.githubusercontent.com/16898831/154816748-7376c0e9-2905-4b19-804d-29be1f44c19a.png)
 
 ## app
 
@@ -68,6 +78,14 @@ It has minimum dependency to speed up compose preview.
 
 - Common API error handling
 - Utility for ViewModel and LiveData
+
+## usecase
+
+- Domain layer
+
+## repository
+
+- Represents the data layer
 
 ## localDataStore
 
