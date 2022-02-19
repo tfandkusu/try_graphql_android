@@ -6,7 +6,32 @@ Try QraphQL Android client using [apollo-kotlin](https://github.com/apollographq
 
 # Functionality
 
-TODO
+This app creates, updates and deletes GitHub Issues using [GitHub GraphQL API](https://docs.github.com/graphql).
+
+| Issue list | Edit |
+| --- | --- |
+| <img src="https://user-images.githubusercontent.com/16898831/154813925-272424c4-4d81-4f6f-8b4f-483960838470.png" width="200"> | <img src="https://user-images.githubusercontent.com/16898831/154813927-16230a98-17db-4e9b-8f43-a9156b686366.png" width="200"> |
+
+# How to build
+
+Edit `local.properties`
+
+## local.properties
+
+| key | value |
+| --- | --- |
+| github_token | Your [Github personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token). Scope is **repo** |
+| owner_name | Repository's user name or organization name. |
+| repository_name | Repository's name. |
+
+## example
+
+```local.properties
+github_token=Your Github personal token
+owner_name=tfandkusu
+repository_name=try_graphql_android
+```
+
 
 # Template
 
@@ -14,11 +39,35 @@ This repository is generated from [tfandkusu/android_app_template](https://githu
 
 # Architecture
 
-TODO
+- **MVVM** of [Android recommended app architecture](https://developer.android.com/jetpack/guide#recommended-app-arch) 
+- **Use Case** for resolving fat ViewModel problem
 
 # Module structure
 
-TODO
+<img src="https://user-images.githubusercontent.com/16898831/147387105-669464f2-9e86-405a-b13e-7fd4213920bc.png" width="720">
+
+## app
+
+- Activity
+- Compose navigation host
+
+## compose
+
+It has minimum dependency to speed up compose preview.
+
+- Compose
+- Compose preview
+- ViewModel interface
+- ViewModel implementation for compose preview
+
+## presentation
+
+- ViewModel implementation for production
+
+## viewCommon
+
+- Common API error handling
+- Utility for ViewModel and LiveData
 
 # Technology used
 
