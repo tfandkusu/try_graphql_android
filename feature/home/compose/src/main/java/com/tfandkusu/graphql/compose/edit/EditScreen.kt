@@ -1,5 +1,6 @@
 package com.tfandkusu.graphql.compose.edit
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,7 +24,6 @@ import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -65,6 +65,7 @@ fun EditScreen(viewModel: EditViewModel, number: Int, backToHome: () -> Unit) {
             }
         }
     }
+    BackHandler(enabled = state.progress) {}
     Scaffold(
         topBar = {
             TemplateTopAppBar(
