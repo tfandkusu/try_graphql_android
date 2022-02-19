@@ -135,7 +135,7 @@ class GithubIssueRemoteDataStoreImpl @Inject constructor(
 
     override suspend fun delete(id: String) {
         try {
-            apolloClient.mutation(DeleteIssueMutation(id))
+            apolloClient.mutation(DeleteIssueMutation(id)).execute()
         } catch (e: ApolloException) {
             throw errorHelper.mapError(e)
         }
