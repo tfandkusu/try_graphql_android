@@ -20,6 +20,8 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -85,6 +87,16 @@ fun EditScreen(viewModel: EditViewModel, number: Int, backToHome: () -> Unit) {
                         )
                     }
                 },
+                actions = {
+                    if (number >= 1) {
+                        IconButton(onClick = { }) {
+                            Icon(
+                                Icons.Default.Delete,
+                                contentDescription = stringResource(R.string.edit_delete)
+                            )
+                        }
+                    }
+                }
             )
         }
     ) {
