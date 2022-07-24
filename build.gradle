@@ -20,7 +20,7 @@ allprojects {
         kotlin {
             target '**/*.kt'
             targetExclude('**/*Dao.kt')
-            ktlint("0.43.0").userData([android: "true", experimental: "true"])
+            ktlint("0.46.1").setUseExperimental(true)
         }
     }
 }

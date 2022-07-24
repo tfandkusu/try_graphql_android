@@ -1,35 +1,35 @@
 [versions]
-kotlin = '1.5.31'
-compose = '1.0.5'
+kotlin = '1.6.10'
+compose = '1.1.1'
 retrofit = '2.9.0'
-room = '2.4.0'
-coroutines = '1.5.2'
-lifecycle = '2.4.0'
-hilt = '2.40.5'
-apollo = '3.0.0'
+room = '2.4.2'
+coroutines = '1.6.4'
+lifecycle = '2.5.0'
+hilt = '2.43'
+apollo = '3.4.0'
 
 [libraries]
 # Gradle Plugin
-android-gradle-plugin = 'com.android.tools.build:gradle:7.0.4'
+android-gradle-plugin = 'com.android.tools.build:gradle:7.2.1'
 kotlin-gradle-plugin = { module = 'org.jetbrains.kotlin:kotlin-gradle-plugin', version.ref = 'kotlin' }
-spotless-gradle-plugin = 'com.diffplug.spotless:spotless-plugin-gradle:5.17.1'
+spotless-gradle-plugin = 'com.diffplug.spotless:spotless-plugin-gradle:6.8.0'
 hilt-gradle-plugin = { module = 'com.google.dagger:hilt-android-gradle-plugin', version.ref = 'hilt' }
 kotlin-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
 kotlin-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
-oss-licenses-plugin = 'com.google.android.gms:oss-licenses-plugin:0.10.4'
+oss-licenses-plugin = 'com.google.android.gms:oss-licenses-plugin:0.10.5'
 # UI
-core = 'androidx.core:core-ktx:1.7.0'
-appcompat = 'androidx.appcompat:appcompat:1.4.0'
-material = 'com.google.android.material:material:1.4.0'
+core = 'androidx.core:core-ktx:1.8.0'
+appcompat = 'androidx.appcompat:appcompat:1.4.2'
+material = 'com.google.android.material:material:1.6.1'
 compose-ui-ui = { module = 'androidx.compose.ui:ui', version.ref = 'compose' }
 compose-material = { module = 'androidx.compose.material:material', version.ref = 'compose' }
 compose-ui-preview = { module = 'androidx.compose.ui:ui-tooling-preview', version.ref = 'compose' }
 compose-ui-tooling = { module = 'androidx.compose.ui:ui-tooling', version.ref = 'compose' }
-navigation-compose = 'androidx.navigation:navigation-compose:2.4.0-rc01'
-activity-compose = 'androidx.activity:activity-compose:1.4.0'
+navigation-compose = 'androidx.navigation:navigation-compose:2.5.0'
+activity-compose = 'androidx.activity:activity-compose:1.5.0'
 compose-livedata = { module = 'androidx.compose.runtime:runtime-livedata', version.ref = 'compose' }
 accompanist-swiperefresh = 'com.google.accompanist:accompanist-swiperefresh:0.20.3'
-preference = 'androidx.preference:preference-ktx:1.1.1'
+preference = 'androidx.preference:preference-ktx:1.2.0'
 play-services-oss-licenses = 'com.google.android.gms:play-services-oss-licenses:17.0.0'
 # Apollo
 apollo-runtime = { module = 'com.apollographql.apollo3:apollo-runtime', version.ref = 'apollo' }
@@ -46,12 +46,12 @@ lifecycle-livedata-ktx = { module = 'androidx.lifecycle:lifecycle-livedata-ktx',
 # Dagger Hilt
 hilt-android = { module = 'com.google.dagger:hilt-android', version.ref = 'hilt' }
 hilt-compiler = { module = 'com.google.dagger:hilt-compiler', version.ref = 'hilt' }
-hilt-navigation-compose = 'androidx.hilt:hilt-navigation-compose:1.0.0-rc01'
+hilt-navigation-compose = 'androidx.hilt:hilt-navigation-compose:1.0.0'
 # Unit test
 junit = 'junit:junit:4.13.2'
-mockk = 'io.mockk:mockk:1.12.2'
+mockk = 'io.mockk:mockk:1.12.4'
 kotest = 'io.kotlintest:kotlintest-runner-junit5:3.4.2'
-robolectric = 'org.robolectric:robolectric:4.5.1'
+robolectric = 'org.robolectric:robolectric:4.8.1'
 test-core = 'androidx.test:core:1.4.0'
 arch-core-testing = 'androidx.arch.core:core-testing:2.1.0'
 # Other
