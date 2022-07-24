@@ -2,6 +2,7 @@ package com.tfandkusu.graphql.data.remote
 
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.cache.normalized.FetchPolicy
+import com.apollographql.apollo3.cache.normalized.apolloStore
 import com.apollographql.apollo3.cache.normalized.doNotStore
 import com.apollographql.apollo3.cache.normalized.fetchPolicy
 import com.apollographql.apollo3.cache.normalized.watch
@@ -16,9 +17,9 @@ import com.tfandkusu.graphql.api.UpdateIssueTitleMutation
 import com.tfandkusu.graphql.api.type.IssueState
 import com.tfandkusu.graphql.error.ApiErrorMapper
 import com.tfandkusu.graphql.model.GithubIssue
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
 interface GithubIssueRemoteDataStore {
 
@@ -33,6 +34,8 @@ interface GithubIssueRemoteDataStore {
     suspend fun create(issue: GithubIssue)
 
     suspend fun delete(id: String)
+
+    suspend fun clearCache()
 }
 
 class GithubIssueRemoteDataStoreImpl @Inject constructor(
@@ -94,7 +97,7 @@ class GithubIssueRemoteDataStoreImpl @Inject constructor(
             apolloClient.mutation(
                 UpdateIssueTitleMutation(
                     issue.id,
-                    issue.title,
+                    issue.title
                 )
             ).doNotStore(true).execute()
             apolloClient.mutation(
@@ -118,7 +121,8 @@ class GithubIssueRemoteDataStoreImpl @Inject constructor(
         try {
             val response = apolloClient.query(
                 GetRepositoryQuery(
-                    ownerName, repositoryName
+                    ownerName,
+                    repositoryName
                 )
             ).execute()
             response.data?.repository?.id?.let { repositoryId ->
@@ -139,5 +143,9 @@ class GithubIssueRemoteDataStoreImpl @Inject constructor(
         } catch (e: ApolloException) {
             throw errorHelper.mapError(e)
         }
+    }
+
+    override suspend fun clearCache() {
+        apolloClient.apolloStore.clearAll()
     }
 }

@@ -36,7 +36,9 @@ class GithubIssueRepositoryTest {
     fun setUp() {
         MockKAnnotations.init(this)
         repository = GithubIssueRepositoryImpl(
-            remoteDataStore, createdLocalDataStore, currentTimeGetter
+            remoteDataStore,
+            createdLocalDataStore,
+            currentTimeGetter
         )
     }
 
@@ -145,6 +147,14 @@ class GithubIssueRepositoryTest {
         coVerifySequence {
             remoteDataStore.delete("id_1")
             remoteDataStore.fetch()
+        }
+    }
+
+    @Test
+    fun clearCache() = runBlocking {
+        repository.clearCache()
+        coVerifySequence {
+            remoteDataStore.clearCache()
         }
     }
 }

@@ -5,8 +5,8 @@ import com.tfandkusu.graphql.data.local.entity.LocalCreated
 import com.tfandkusu.graphql.data.remote.GithubIssueRemoteDataStore
 import com.tfandkusu.graphql.model.GithubIssue
 import com.tfandkusu.graphql.util.CurrentTimeGetter
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
 interface GithubIssueRepository {
 
@@ -21,6 +21,8 @@ interface GithubIssueRepository {
     suspend fun create(issue: GithubIssue)
 
     suspend fun delete(id: String)
+
+    suspend fun clearCache()
 }
 
 class GithubIssueRepositoryImpl @Inject constructor(
@@ -61,5 +63,9 @@ class GithubIssueRepositoryImpl @Inject constructor(
     override suspend fun delete(id: String) {
         remoteDataStore.delete(id)
         remoteDataStore.fetch()
+    }
+
+    override suspend fun clearCache() {
+        remoteDataStore.clearCache()
     }
 }
